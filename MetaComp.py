@@ -1,5 +1,12 @@
 # -*- coding: utf-8 -*-
 """
+Created on Fri Feb 24 17:08:19 2023
+
+@author: utah.johnson
+"""
+
+# -*- coding: utf-8 -*-
+"""
 Created on Thu Feb 23 17:01:05 2023
 
 @author: utah.johnson
@@ -42,15 +49,15 @@ def alpha(b):
 lgba=5 #length of glenoid offset
 Pgba=np.array(([0, lgba, 0])) #no need for rotation
 lgdo=[38,36,32] #diameter of glenoid
-lhld=30 #humeral liner depth
+lhld=18.5 #humeral liner depth
 lhto=5.5 #humeral tray offset
 lsmo=[15.6,7.5,9.1] #humeral medial offset
-lhdp=50 #length from greater tuberosity to proximal deltoid insertion
+lhdp=10 #length from greater tuberosity to proximal deltoid insertion
 lhdd=158 #length from greater tuberosity to distal deltoid insertion
 lhdi=42.3/2 #diameter of humeral bone
 #user granted step data based on computational speed
 step=10
-rom=100
+rom=140
 #creating abduction angle range
 abang=np.linspace(0,rom,step)
 #we need to iterate over the range to find the indexwise moment 
@@ -102,10 +109,10 @@ for j in b:
     c3=c3+1
     
     
-cabb=[0, 20, 40, 60, 80, 100,]
-mglhy=[30, 36, 41, 45.5, 58.5, 58.5, ]
-mgmhy=[30, 36, 43.5, 48, 51.5, 53, ]
-lgmhy=[22, 27.5, 33, 38, 43.5, 45.5, ]
+cabb=[0, 20, 40, 60, 80, 100, 120, 140]
+mglhy=[30, 36, 41, 45.5, 58.5, 58.5, 56.5, 41.5]
+mgmhy=[30, 36, 43.5, 48, 51.5, 53, 52.5, 48]
+lgmhy=[22, 27.5, 33, 38, 43.5, 45.5, 46, 45.5]
 pmglhy=np.polyfit(cabb,mglhy,2)
 pmgmhy=np.polyfit(cabb,mgmhy,2)
 plgmhy=np.polyfit(cabb,lgmhy,2)
@@ -137,20 +144,20 @@ for i in cabb:
     
 mglhy2=np.delete(mglhy2+30,0)
 #plt.plot(cabb,mglhy)
-plt.plot(cabb,mglhy2,marker='s',label='MGLH, CR',color='b')
+plt.plot(cabb,mglhy2,marker='s',label='MGLH CR',color='r')
 
 mgmhy2=np.delete(mgmhy2+30,0)
 #plt.plot(cabb,mgmhy)
-plt.plot(cabb,mgmhy2,marker='o',label='MGMH, CR',color='b')
+plt.plot(cabb,mgmhy2,marker='o',label='MGMH CR',color='r')
 
 lgmhy2=np.delete(lgmhy2+20,0)
 #plt.plot(cabb,lgmhy)
-plt.plot(cabb,lgmhy2,marker='^',label='LGMH, CR',color='b')
+plt.plot(cabb,lgmhy2,marker='^',label='LGMH CR',color='r')
 plt.legend()
 
 #############
-cabb2=[0, 20, 40, 60, 80, 100]
-mglhy=[30.5, 31.5, 36.8, 42.5, 45.5, 45]
+cabb2=[0, 20, 40, 60, 80, 100, 120]
+mglhy=[30.5, 31.5, 36.8, 42.5, 45.5, 45, 40]
 
 pmglhy=np.polyfit(cabb2,mglhy,2)
 
@@ -174,7 +181,7 @@ for i in cabb2:
     
 mglhy2=np.delete(mglhy2+30,0)
 #plt.plot(cabb2,mglhy)
-plt.plot(cabb2,mglhy2,marker='s',label='Otis, 2010',color='r')
+plt.plot(cabb2,mglhy2,marker='s',label='Otis, 2010',color='b')
 
 plt.legend()
 
@@ -214,7 +221,7 @@ for z in alpha:
     dtsdts=16.25*1000 #acc in mm/s^2
     dt=109.42*1000 #vel in mm/s we may not use this though.
 
-    ma=100
+    ma=140
     #first need arc length
     s=lh*np.deg2rad(ma) #length of humerus times the max abduction angle gives arc length
     #now we can create a kinematic simulation
@@ -299,19 +306,33 @@ for z in alpha:
         z13=limd*s2(alpha)*c2(alpha)
         pma=z1+z2+z3+z4+z5+z6+z6+z7+z8+z9+z1
         pms[count2]=-pma*.5
-        ana[count2]=7*np.log(.2*j)
+        
         count2=count2+1
     
-    #subplotting results
-    ana[0]=ana[1]
-    if c3==0:
-         plt.plot(theta,pms,marker='s',label='MGLH, DMRSA ALG',color='y')
-    if c3==1:
-         plt.plot(theta,pms,marker='o',label='MGMH, DMRSA ALG',color='y')
-    if c3==2:
-         plt.plot(theta,pms,marker='^',label='MGLH, LGMH ALG',color='y')
+   # if c3==0:
+         #plt.plot(theta,pms,marker='s',label='MGLH, DMRSA ALG',color='y')
+    #if c3==1:
+        # plt.plot(theta,pms,marker='o',label='MGMH, DMRSA ALG',color='y')
+   # if c3==2:
+       #  plt.plot(theta,pms,marker='^',label='LGMH, LGMH ALG',color='y')
+    c3 +=1
          
-plt.legend(bbox_to_anchor=(1.04, 1), loc="upper left")
-  
+
+cabb=[0, 20, 40, 60, 80, 100, 120]
+mglhy=[30, 32, 34.5, 39.5, 43, 44, 39.8]
+
+pmglhy=np.polyfit(cabb,mglhy,3)
+
+mglhy2=np.zeros((1,1))
+
+for i in cabb:
+    zmglhy=pmglhy[0]*i**3+pmglhy[1]*i**2+pmglhy[2]*i+pmglhy[3]
+    mglhy2=np.append(mglhy2,zmglhy)
+    
+mglhy2=np.delete(mglhy2,0)
+#plt.plot(cabb,mglhy)
+#plt.plot(cabb,mglhy2,marker='<',label='Ackland ZM Trabecular',color='y')
+
 plt.ylim(0,65)
-plt.xlim(0,105)
+plt.xlim(0,140)
+plt.legend(bbox_to_anchor=(1.04, 1), loc="upper left")

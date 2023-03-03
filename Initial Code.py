@@ -46,17 +46,17 @@ def alpha(b):
 #Pgba is static vector of glenoid offset
 lgba=5 #length of glenoid offset
 Pgba=np.array(([0, lgba, 0])) #no need for rotation
-lgdo=32 #diameter of glenoid
-lhld=30 #humeral liner depth
+lgdo=38 #diameter of glenoid
+lhld=18 #humeral liner depth
 lhto=5.5 #humeral tray offset
-lsmo=9.5 #humeral medial offset
-lhdp=97 #length from greater tuberosity to proximal deltoid insertion
+lsmo=15.6 #humeral medial offset
+lhdp=10 #length from greater tuberosity to proximal deltoid insertion
 lhdd=158 #length from greater tuberosity to distal deltoid insertion
 lhdi=42.3/2 #diameter of humeral bone
 #user granted step data based on computational speed
 step=91
 #creating abduction angle range
-abrange=140
+abrange=90
 abang=np.linspace(0,abrange,step)
 #we need to iterate over the range to find the indexwise moment 
 c1=0
@@ -64,7 +64,7 @@ Pgdo=np.zeros((1,1))
 indexd=np.zeros((1,))
 indexp=np.zeros((1,))
 indexpsh=np.zeros((1,))
-b=155
+b=145
 indec=0
 for z in abang:
     Pgdo=np.array(nRa(z)*[0, -lgdo/2, 0]) #index vector for glenoid diameter in N coordinates
@@ -78,12 +78,16 @@ for z in abang:
     Psh=Pgdo+Phld+Phto+Psmo
     mash=Psh[0,]
     indexpsh=np.append(indexpsh,mash)
+    zz=abs(z-60)
     
     #### humeral component
     #need vectors of both the humeral diameter and the humeral length
     Psi=nRa(z)*alpha(b)*[lhdi,lhdp,0]
     maxx=Psi[0,0]+Psi[0,1]
-    momentarm=(maxx+mash)*.7
+    momentarm=(maxx+mash)
+    if zz<1:
+        masix=momentarm
+        angle=z
     indexd=np.append(indexd, momentarm)   
     if momentarm>indec:
         indec=momentarm
@@ -97,11 +101,12 @@ plt.xlabel('Abduction Angle (Degree)')
 plt.ylabel('Moment Arm (mm)')
 # record end time
 print('Maximum moment arm of',round(indec,2),'mm at',round(enc,2),'degrees')
+print('Moment arm at minimum is',indexd[0],'and the moment arm at 60 degrees is',masix)
 end = time.time()
 
 # print the difference between start
 # and end time in milli. secs
-print("The time of execution of above program is :",
-      (end-start) * 10**3, "ms")
+#print("The time of execution of above program is :",
+      #(end-start) * 10**3, "ms")
 
 
