@@ -1,16 +1,13 @@
 #MomentArm 1st Revision
 import numpy as np
 import matplotlib.pyplot as plt
+import os
+import openpyxl
+wb=openpyxl.Workbook()
+ws=wb.active
 
+path = os.path.join(os.path.expanduser("~"), "Desktop", "Test Exports", "MomentArm.xlsx")
 
-
-# Import time module
-import time
- 
-# record start time
-start = time.time()
- 
- 
 
 
 #rotational matrices
@@ -64,7 +61,7 @@ Pgdo=np.zeros((1,1))
 indexd=np.zeros((1,))
 indexp=np.zeros((1,))
 indexpsh=np.zeros((1,))
-b=145
+b=155
 indec=0
 for z in abang:
     Pgdo=np.array(nRa(z)*[0, -lgdo/2, 0]) #index vector for glenoid diameter in N coordinates
@@ -99,14 +96,19 @@ plt.plot(abang,indexd,marker='o')
 plt.title('Moment Arm of Medial Deltoid During Abduction')
 plt.xlabel('Abduction Angle (Degree)')
 plt.ylabel('Moment Arm (mm)')
-# record end time
+
 print('Maximum moment arm of',round(indec,2),'mm at',round(enc,2),'degrees')
 print('Moment arm at minimum is',indexd[0],'and the moment arm at 60 degrees is',masix)
-end = time.time()
 
-# print the difference between start
-# and end time in milli. secs
-#print("The time of execution of above program is :",
-      #(end-start) * 10**3, "ms")
+ws['A1']='Glenoid Diameter'
+ws['B1']='Humeral Liner Depth'
+ws['C1']='Humeral Tray Offset'
+ws['D1']='Humeral Medial Offset'
+ws['E1']='Humeral Neck Shaft Angle'
+ws['F1']='Maximum Moment Arm'
+ws['G1']='Maximum Moment Arm Location'
+ws['H1']='Minimum Moment Arm'
+ws['I1']='Moment Arm at 60 Degrees'
+wb.save(path)
 
 

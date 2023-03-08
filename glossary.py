@@ -6,23 +6,19 @@ Created on Tue Feb 28 14:12:56 2023
 """
 
 
-from tqdm import tqdm
-import time
 
-import numpy as np
 
-import os
-import openpyxl
-wb=openpyxl.Workbook()
-ws=wb.active
-
-path = os.path.join(os.path.expanduser("~"), "Desktop", "Test Exports", "MomentArm.xlsx")
-ws.append(['Length of Glenoid Offset','Glenoid Diamater','Humeral Liner Depth','Humeral Tray Offset','Humeral Medial Offset','Neck Shaft Angle','Maximum Moment Arm','Maximum Moment Arm Location','Minimum Moment Arm','Moment Arm at 60 Degrees'])
 #######Function
 def DMRSAmA(lgba, lgdo, lhld,lhto, lsmo, b):
     import numpy as np
     import matplotlib.pyplot as plt
-    
+    import os
+    import openpyxl
+    wb=openpyxl.Workbook()
+    ws=wb.active
+
+    path = os.path.join(os.path.expanduser("~"), "Desktop", "Test Exports", "MomentArm.xlsx")
+
 
 
     #rotational matrices
@@ -101,19 +97,30 @@ def DMRSAmA(lgba, lgdo, lhld,lhto, lsmo, b):
             enc=z
     indexd=np.delete(indexd,(0,0))
     indexpsh=np.delete(indexpsh,(0,0))
-    #plt.plot(abang,indexd,marker='o')
-    plt.plot(abang,indexpsh)
+    plt.plot(abang,indexd,marker='o')
+    #plt.plot(abang,indexpsh)
     plt.title('Moment Arm of Medial Deltoid During Abduction')
     plt.xlabel('Abduction Angle (Degree)')
     plt.ylabel('Moment Arm (mm)')
 
-    #print('Maximum moment arm of',round(indec,2),'mm at',round(enc,2),'degrees')
-    #print('Moment arm at minimum is',indexd[0],'and the moment arm at 60 degrees is',masix)
-    mma=round(indec,2)
-    mmal=round(enc,2)
-    minmma=indexd[0]
-    masix=masix
-    return mma,mmal,minmma,masix
+    print('Maximum moment arm of',round(indec,2),'mm at',round(enc,2),'degrees')
+    print('Moment arm at minimum is',indexd[0],'and the moment arm at 60 degrees is',masix)
+
+    ws['A1']='Glenoid Diameter'
+    ws['A2']=lgdo
+    ws['B1']='Humeral Liner Depth'
+    ws['B2']=lhld
+    ws['C1']='Humeral Tray Offset'
+    ws['C2']=lhto
+    ws['D1']='Humeral Medial Offset'
+    ws['D2']=lsmo
+    ws['E1']='Humeral Neck Shaft Angle'
+    ws['E2']=b
+    ws['F1']='Maximum Moment Arm'
+    ws['G1']='Maximum Moment Arm Location'
+    ws['H1']='Minimum Moment Arm'
+    ws['I1']='Moment Arm at 60 Degrees'
+    wb.save(path)
 
 
 lgba=[38,42,46]
@@ -132,34 +139,11 @@ import itertools
 
 # combine the variables into a list of tuples
 all_trials = list(itertools.product(lgba, lgdo, lhld, lhto,lsmo,b))
-zz=np.shape(all_trials)
+
 # randomize the order of the trials
 random.shuffle(all_trials)
 # iterate over the randomized trials
-# define the number of iterations
-num_iterations = zz[0]
-
-# define the interval at which to update the progress bar
-progress_interval = 1
-
-# loop over the iterations
-c3=0
 for trial in all_trials:
-    [mma,mmal,minmma,masix]=DMRSAmA(trial[0],trial[1],trial[2],trial[3],trial[4],trial[5])
-    var=[trial[0],trial[1],trial[2],trial[3],trial[4],trial[5],mma,mmal,minmma,masix]
-    ws.append(var)
-    # update the progress bar every `progress_interval` iterations
-    if (c3 + 1) % progress_interval == 0:
-        progress = int((c3 + 1) / num_iterations * 100)
-        print(f"Progress: {progress}%")    
-    c3=c3+1
-    
+    DMRSAmA(trial[0],trial[1],trial[2],trial[3],trial[4],trial[5])
     
 
-wb.save(path)
-
-
-
-
-    
-print('Done')
