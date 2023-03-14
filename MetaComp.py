@@ -49,7 +49,7 @@ def alpha(b):
 lgba=5 #length of glenoid offset
 Pgba=np.array(([0, lgba, 0])) #no need for rotation
 lgdo=[38,36,32] #diameter of glenoid
-lhld=18.5 #humeral liner depth
+lhld=5 #humeral liner depth
 lhto=5.5 #humeral tray offset
 lsmo=[15.6,7.5,9.1] #humeral medial offset
 lhdp=10 #length from greater tuberosity to proximal deltoid insertion
@@ -65,7 +65,7 @@ c1=0
 
 b=[145, 155, 135]
 c3=0
-w=.8
+w=1
 for j in b:
     Pgdo=np.zeros((1,1))
     indexd=np.zeros((1,))
@@ -335,4 +335,8 @@ mglhy2=np.delete(mglhy2,0)
 
 plt.ylim(0,65)
 plt.xlim(0,140)
-plt.legend(bbox_to_anchor=(1.04, 1), loc="upper left")
+legend=plt.legend(bbox_to_anchor=(1.04, 1), loc="upper left")
+
+
+
+
