@@ -33,7 +33,6 @@ def DMRSAmA(lgba, lgdo, lhld,lhto, lsmo, b,color):
         return nRa
     def aRb(b):
         bz=180-b
-        
         aRb=np.array(([-np.cos(np.deg2rad(bz)), np.sin(np.deg2rad(bz)), 0], [-np.sin(np.deg2rad(bz)), -np.cos(np.deg2rad(bz)), 0], [0, 0, 1]))
         return aRb
     def nRb(z,b):
@@ -42,9 +41,9 @@ def DMRSAmA(lgba, lgdo, lhld,lhto, lsmo, b,color):
         aRb=np.array(([-np.cos(np.deg2rad(bz)), np.sin(np.deg2rad(bz)), 0], [-np.sin(np.deg2rad(bz)), -np.cos(np.deg2rad(bz)), 0], [0, 0, 1]))
         nRb=aRb*nRa
         return nRb
-    def aRn(z):
-        aRn=np.array(([np.cos(np.deg2rad(z)), np.sin(np.deg2rad(z)), 0], [-np.sin(np.deg2rad(z)), np.cos(np.deg2rad(z)), 0], [ 0, 0, 1]))
-        return aRn
+    #def aRn(z):
+        #aRn=np.array(([np.cos(np.deg2rad(z)), np.sin(np.deg2rad(z)), 0], [-np.sin(np.deg2rad(z)), np.cos(np.deg2rad(z)), 0], [ 0, 0, 1]))
+        #return aRn
     def alpha(b):
         b=b-135
         alpha=np.array(([np.cos(np.deg2rad(b)), -np.sin(np.deg2rad(b)), 0], [np.sin(np.deg2rad(b)), np.cos(np.deg2rad(b)), 0], [ 0, 0, 1]))
@@ -64,7 +63,7 @@ def DMRSAmA(lgba, lgdo, lhld,lhto, lsmo, b,color):
     #user granted step data based on computational speed
     step=91
     #creating abduction angle range
-    abrange=110
+    abrange=80
     abang=np.linspace(0,abrange,step)
     #we need to iterate over the range to find the indexwise moment 
     c1=0
@@ -82,7 +81,7 @@ def DMRSAmA(lgba, lgdo, lhld,lhto, lsmo, b,color):
         
         Phto=nRa(z)*[0, -lhto, 0] #index vector for humeral tray offset in N coordinates
         Phto=Phto[:,1]
-        Psmo=nRb(z,b)*[-lsmo, 0, 0] #index vector for medial humeral offset in N coordinates
+        Psmo=nRa(z)*alpha(b)*[lsmo, 0, 0] #index vector for medial humeral offset in N coordinates
         Psmo=Psmo[:,0]
         Psh=Pgdo+Phld+Phto+Psmo
         
@@ -93,8 +92,8 @@ def DMRSAmA(lgba, lgdo, lhld,lhto, lsmo, b,color):
         #### humeral component
         #need vectors of both the humeral diameter and the humeral length
         Psi=nRa(z)*alpha(b)*[lhdi+lgt,lhdp,0]
-        maxx=Psi[0,0]+Psi[0,1]
-        momentarm=(maxx+mash)*.8
+        maxx=Psi[0,0]
+        momentarm=(maxx+mash)
         
         
         
