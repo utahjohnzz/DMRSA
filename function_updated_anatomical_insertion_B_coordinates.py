@@ -63,7 +63,7 @@ def DMRSAmA(lgba, lgdo, lhld,lhto, lsmo, b,color):
     #user granted step data based on computational speed
     step=91
     #creating abduction angle range
-    abrange=140
+    abrange=150
     abang=np.linspace(0,abrange,step)
     #we need to iterate over the range to find the indexwise moment 
     c1=0
@@ -94,6 +94,12 @@ def DMRSAmA(lgba, lgdo, lhld,lhto, lsmo, b,color):
         Psi=nRa(z)*alpha(b)*[lhdi+lgt,lhdp,0] #
         maxx=Psi[0,0]
         momentarm=(maxx+mash)
+        minv=np.linalg.inv(nRa(z))*np.linalg.inv(alpha(b))
+        
+        #print(minv)
+        momentarm=minv[:,0]*momentarm
+        momentarm=momentarm[0]
+        #print(momentarm)
         
         
         

@@ -53,7 +53,7 @@ lhdi=42.3/2 #diameter of humeral bone
 #user granted step data based on computational speed
 step=91
 #creating abduction angle range
-abrange=90
+abrange=145
 abang=np.linspace(0,abrange,step)
 #we need to iterate over the range to find the indexwise moment 
 c1=0
@@ -64,24 +64,28 @@ indexpsh=np.zeros((1,))
 b=155
 indec=0
 for z in abang:
-    Pgdo=np.array(nRa(z)*[0, -lgdo/2, 0]) #index vector for glenoid diameter in N coordinates
+    Pgdo=np.array(nRa(z)*[-lgdo/2, 0, 0]) #index vector for glenoid diameter in N coordinates
     Pgdo=Pgdo[:,1]
     Phld=nRa(z)*[0, -lhld, 0] #index vector for humeral liner depth in N coordinates
     Phld=Phld[:,1]
     Phto=nRa(z)*[0, -lhto, 0] #index vector for humeral tray offset in N coordinates
     Phto=Phto[:,1]
-    Psmo=nRb(z,b)*[-lsmo, 0, 0] #index vector for medial humeral offset in N coordinates
+    Psmo=nRa(z)*alpha(b)*[lsmo, 0, 0] #index vector for medial humeral offset in N coordinates
     Psmo=Psmo[:,0]
-    Psh=Pgdo+Phld+Phto+Psmo
+    Psh=Phld+Phto+Psmo
     mash=Psh[0,]
     indexpsh=np.append(indexpsh,mash)
     zz=abs(z-60)
-    
+    print(Pgdo)
     #### humeral component
     #need vectors of both the humeral diameter and the humeral length
     Psi=nRa(z)*alpha(b)*[lhdi,lhdp,0]
     maxx=Psi[0,0]+Psi[0,1]
     momentarm=(maxx+mash)
+    #minv=np.linalg.inv(nRa(z))*np.linalg.inv(alpha(b))
+    #momentarm=minv[:,0]*momentarm
+    #momentarm=momentarm[0]
+    
     if zz<1:
         masix=momentarm
         angle=z
