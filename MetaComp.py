@@ -72,8 +72,8 @@ for j in b:
     indexp=np.zeros((1,))
     indexpsh=np.zeros((1,))
     for z in abang:
-        Pgdo=np.array(nRa(z)*[0, -lgdo[c3]/2, 0]) #index vector for glenoid diameter in N coordinates
-        Pgdo=Pgdo[:,1]
+        Pgdo=[0, -lgdo[c3]/2, 0] #index vector for glenoid diameter in N coordinates
+        
         Phld=nRa(z)*[0, -lhld, 0] #index vector for humeral liner depth in N coordinates
         Phld=Phld[:,1]
         Phto=nRa(z)*[0, -lhto, 0] #index vector for humeral tray offset in N coordinates
@@ -332,6 +332,84 @@ for i in cabb:
 mglhy2=np.delete(mglhy2,0)
 #plt.plot(cabb,mglhy)
 #plt.plot(cabb,mglhy2,marker='<',label='Ackland ZM Trabecular',color='y')
+
+
+
+
+
+
+
+
+
+import numpy as np
+import matplotlib.pyplot as plt
+def nRa(z):
+    nRa=np.array(([np.cos(np.deg2rad(z)), -np.sin(np.deg2rad(z)), 0], [np.sin(np.deg2rad(z)), np.cos(np.deg2rad(z)), 0], [ 0, 0, 1]))
+    return nRa
+def aRb(na):
+    b=na-90
+    nRa=np.array(([np.sin(np.deg2rad(b)), np.cos(np.deg2rad(b)), 0], [-np.cos(np.deg2rad(b)), np.sin(np.deg2rad(b)), 0], [ 0, 0, 1]))
+    return nRa
+lgba=5 #length of glenoid offset
+lgdo=[38,36,32] #diameter of glenoid
+lhld=8 #humeral liner depth
+lhto=5 #humeral tray offset
+lsmo=[15.6,7.5,9.1] #humeral medial offset
+lhdd=149 #length from greater tuberosity to distal deltoid insertion
+lhdi=42.3/2 #diameter of humeral bone
+rom=180
+step=1
+
+n1=np.zeros((0,0))
+n2=np.zeros((0,0))
+b1=np.zeros((0,0))
+b2=np.zeros((0,0))
+na=[145, 155, 135]
+abang=np.linspace(180-na,rom,141)
+c3=0
+for j in na:
+    for z in abang:
+        Rna=nRa(z) #A to N Matrix
+        Ran=np.transpose(Rna) #N to A Matrix
+        Rab=aRb(na) #B to A matrix
+        Rba=np.transpose(Rab) #A to B matrix
+        Rnb=Rna.dot(Rab) #B to N matrix
+        Rbn=np.transpose(Rnb) #N to B matrix
+        
+        
+        Pgha=[0,-lhld-lhto-lgdo/2,0] #this is composed of the humeral liner and the humeral tray offset
+        Pghn=Rna.dot(Pgha) #converts to N
+        
+        
+        #Ph=[lsmo+lhdi+12,-lhdd,0] #this is the humeral medial offset, the diamater of the humerus, and the insertion point in B coordinates
+        Ph=[0,0,0]
+        Phn=Rnb.dot(Ph)
+        
+        nv=Pghn+Phn
+        bv=Rbn.dot(nv)
+        b1=np.append(b1,bv[0])
+    c3=c3+1
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 plt.ylim(0,65)
 plt.xlim(0,140)
