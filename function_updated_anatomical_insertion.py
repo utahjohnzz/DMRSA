@@ -166,7 +166,7 @@ def DMRSAmA(lgba, lgdo, lhld,lhto, lsmo, b,color):
         mash=Psh[0,] #give the magnitude of the joint vector in N1 coordinates
         indexpsh=np.append(indexpsh,mash) #records this
         
-        zz=abs(z-60)
+       
         
         #### humeral component
         #need vectors of both the humeral diameter and the humeral length
@@ -185,7 +185,7 @@ def DMRSAmA(lgba, lgdo, lhld,lhto, lsmo, b,color):
         #print(pDI)
 
         
-        
+        zz=abs(z-60)
         if zz<1:
             masix=momentarm
             angle=z

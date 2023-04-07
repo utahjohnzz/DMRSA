@@ -35,24 +35,26 @@ bz=b2-90
 rthm=1.8 #how much GH:Scapular
 ghm=abrange-abrange/((1+rthm)/rthm) #how much purely GH rotation occurs
 abang=np.linspace(0,ghm+bz,step)
-
+#if b==155:
+    #abang=np.linspace(0,ghm+bz-20,step)
 #we need to iterate over the range to find the indexwise moment 
 indexd=np.zeros((0,0))
 indexb=np.zeros((0,0))
 
 r1m=38/2
 r2m=20
-r3m=-5
+r3m=0
 r4m=30
 r5m=60
 r6m=29.9 #15
 r7m=33.9 #9
 ho=15.6
+
 for z in abang:
-    
+
     #GH Joint
-    r1=[0, 0, 0] #Glenoid Application to Glenoid Interface
-    
+    r1=nRa(z)*[21, 0, 0] #Glenoid Application to Glenoid Interface
+    r1=r1[:,1]
     r2=nRa(z)*[0, -ho, 0] #Resection Plane to Articular Surface
     r2=r2[:,1]
     
@@ -66,7 +68,7 @@ for z in abang:
     n1=r1[0]+r2[0]+r3[0]+r4[0]+r5[0] #moment arm in N coordinates
     n2=r1[1]+r2[1]+r3[1]+r4[1]+r5[1] #moment arm in N coordinates
     n=np.array([n1,n2,0])
-    print(n1)
+    
     #=[r6m,0,0] # horizontal distance from COR to Acromion outer portion
     #r7=[0,r7m,0] #vertical distance from COR to Acromion outer portion
     acr=[r6m,r7m,0]
@@ -77,13 +79,24 @@ for z in abang:
     beta=np.rad2deg(np.arctan(mf[1]/mf[0]))
     zeta=90-beta
     bm=n1*np.cos(np.deg2rad(zeta))
+    beta=np.rad2deg(np.arcsin(bm/np.sqrt(n1**2+n2**2)))
+
     indexd=np.append(indexd,n1)
     indexb=np.append(indexb,bm)
-    
-    
+    if z==0:
+        abdz=bm
+    qua=z-60
+    if qua<1:
+        abdsix=bm
+        
+
 abang=np.linspace(0,abrange,step)
-#plt.plot(abang,indexd,label='N Coordinates, DMRSA',color='r',marker='o')
-plt.plot(abang,indexb,label='B Coordinates, DMRSA',color='r',marker='s')
+
+plt.plot(abang,indexb,color='r',marker='^',label='DMRSA')
+    
+
+plt.plot(abang,indexd,label='N Coordinates, DMRSA',color='r',marker='o')
+#plt.plot(abang,indexb,label='B Coordinates, DMRSA',color='r',marker='s')
 plt.legend()
 averagema=np.average(indexb)
-#print('Average Moment Arm',averagema)
+print('Average Moment Arm',averagema)

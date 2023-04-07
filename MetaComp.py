@@ -337,7 +337,7 @@ mglhy2=np.delete(mglhy2,0)
 
 
 
-<<<<<<< HEAD
+
 
 
 
@@ -392,7 +392,7 @@ for j in na:
     c3=c3+1
 
     
-=======
+
 #MomentArm 1st Revision
 import numpy as np
 import matplotlib.pyplot as plt
@@ -495,7 +495,7 @@ plt.ylabel('Moment Arm (mm)')
 
 
 
->>>>>>> ce48074a0448a1f186b1ae74a43441b3a0df3c7d
+
 
 
 
