@@ -58,7 +58,7 @@ def DMRSAmA(lgba, lgdo, lhld,lhto, lsmo, b,color):
     
     Pgba=np.array(([0, lgba, 0])) #no need for rotation
     
-    lhdp=140 #length from greater tuberosity to proximal deltoid insertion
+    lhdp=100 #length from greater tuberosity to proximal deltoid insertion
     lhdi=(21.4)/2
     #user granted step data based on computational speed
     step=91
