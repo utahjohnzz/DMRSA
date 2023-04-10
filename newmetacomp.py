@@ -92,12 +92,12 @@ for z in abang:
 
 abang=np.linspace(0,abrange,step)
 
-plt.plot(abang,indexb,color='r',marker='^',label='DMRSA')
+plt.plot(abang,indexb,color='r',marker='^',label='MGLH DMRSA')
 
 #plt.plot(abang,indexd,label='N Coordinates, DMRSA',color='r',marker='o')
 #plt.plot(abang,indexb,label='B Coordinates, DMRSA',color='r',marker='s')
 plt.legend()
-averagema=np.average(indexd)
+averagema=np.average(indexb)
 print('Average Moment Arm',averagema)
 
 
@@ -251,12 +251,12 @@ for z in abang:
 
 abang=np.linspace(0,abrange,step)
 
-plt.plot(abang,indexb,color='b',marker='o',label='DMRSA')
+plt.plot(abang,indexb,color='b',marker='o',label='MGMH DMRSA')
 
 #plt.plot(abang,indexd,label='N Coordinates, DMRSA',color='r',marker='o')
 #plt.plot(abang,indexb,label='B Coordinates, DMRSA',color='r',marker='s')
 plt.legend()
-averagema=np.average(indexd)
+averagema=np.average(indexb)
 print('Average Moment Arm',averagema)
 
 
@@ -328,7 +328,7 @@ for z in abang:
     
     #=[r6m,0,0] # horizontal distance from COR to Acromion outer portion
     #r7=[0,r7m,0] #vertical distance from COR to Acromion outer portion
-    acr=[r6m,r7m,0]
+    acr=[r6m-6,r7m,0]
     #b1=n1*np.cos(np.deg2rad(z-bz))
     #indexb=np.append(indexb,b1)
     mf=abs(acr-n)
@@ -349,11 +349,13 @@ for z in abang:
 
 abang=np.linspace(0,abrange,step)
 
-plt.plot(abang,indexb,color='g',marker='^',label='DMRSA')
+plt.plot(abang,indexb,color='g',marker='^',label='LGMH DMRSA')
 
 #plt.plot(abang,indexd,label='N Coordinates, DMRSA',color='r',marker='o')
 #plt.plot(abang,indexb,label='B Coordinates, DMRSA',color='r',marker='s')
-plt.legend()
-averagema=np.average(indexd)
-print('Average Moment Arm',averagema)
+plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+averagema=np.average(indexb)
+print('Average Moment Arm LGMH',averagema)
 
+plt.xlabel('Angle of Abduction (degree)')
+plt.ylabel('Moment Arm (mm)')
