@@ -40,7 +40,7 @@ abang=np.linspace(0,ghm+bz,step)
 #we need to iterate over the range to find the indexwise moment 
 indexd=np.zeros((0,0))
 indexb=np.zeros((0,0))
-
+r8m=46.8/2 #IM to LH
 r1m=38/2
 r2m=20
 r3m=0
@@ -49,7 +49,8 @@ r5m=60
 r6m=29.9 #15
 r7m=33.9 #9
 ho=15.6
-print(abang)
+indexw=np.zeros((0,0))
+
 for z in abang:
     
     #GH Joint
@@ -88,10 +89,25 @@ for z in abang:
     qua=z-60
     if qua<1:
         abdsix=bm
+    #Deltoid Wrapping.
+    #first to find the vector from the COR to the lateral edge of the humeral resection
+    #we already have the vector to the resection in the form of r1, r2
+    #we now need to find the distance from the axis of the prosthesis altered by r3 to the edge of the lateral humerus.
+    #we now need to incorporate an anatomy vector that is the distance from the IM canal to the lateral humerus.
+    r8=nRa(z)*[r8m,0,0]
+    r8=r8[:,0]
+    dwn=np.array([(r1[0]+r2[0]+r3[0]+r8[0]),(r1[1]+r2[1]+r3[1]+r8[1]),0])
+    
+    #with that vector, we can now find the line of action for the delotid when considering deltoid wrapping
+    mladw=acr-dwn
+    rho=np.rad2deg(np.arctan(mladw[1]/mladw[0]))
+    phi=90-rho
+    dwm=n1*np.cos(np.deg2rad(phi))
+    indexw=np.append(indexw,dwm)
         
 
 abang=np.linspace(0,abrange,step)
-
+plt.plot(abang,indexw,label='MGLH DMRSA DW',color='#C86262',marker='s')
 plt.plot(abang,indexb,color='r',marker='^',label='MGLH DMRSA')
 
 #plt.plot(abang,indexd,label='N Coordinates, DMRSA',color='r',marker='o')
@@ -208,7 +224,7 @@ r5m=60
 r6m=29.9 #15
 r7m=33.9 #9
 ho=7.5
-print(abang)
+indexw=np.zeros((0,0))
 for z in abang:
     
     #GH Joint
@@ -247,10 +263,25 @@ for z in abang:
     qua=z-60
     if qua<1:
         abdsix=bm
+    #Deltoid Wrapping.
+    #first to find the vector from the COR to the lateral edge of the humeral resection
+    #we already have the vector to the resection in the form of r1, r2
+    #we now need to find the distance from the axis of the prosthesis altered by r3 to the edge of the lateral humerus.
+    #we now need to incorporate an anatomy vector that is the distance from the IM canal to the lateral humerus.
+    r8=nRa(z)*[r8m,0,0]
+    r8=r8[:,0]
+    dwn=np.array([(r1[0]+r2[0]+r3[0]+r8[0]),(r1[1]+r2[1]+r3[1]+r8[1]),0])
+    
+    #with that vector, we can now find the line of action for the delotid when considering deltoid wrapping
+    mladw=acr-dwn
+    rho=np.rad2deg(np.arctan(mladw[1]/mladw[0]))
+    phi=90-rho
+    dwm=n1*np.cos(np.deg2rad(phi))
+    indexw=np.append(indexw,dwm)
         
 
 abang=np.linspace(0,abrange,step)
-
+plt.plot(abang,indexw,label='MGMH DMRSA DW',color='#7C7DE3',marker='o')
 plt.plot(abang,indexb,color='b',marker='o',label='MGMH DMRSA')
 
 #plt.plot(abang,indexd,label='N Coordinates, DMRSA',color='r',marker='o')
@@ -275,8 +306,6 @@ def alpha(b):
     b=b-90
     alpha=np.array(([np.sin(np.deg2rad(b)), np.cos(np.deg2rad(b)), 0], [-np.cos(np.deg2rad(b)), np.sin(np.deg2rad(b)), 0], [ 0, 0, 1]))
     return alpha
-
-
 
 ####################
 #Glenohumeral Joint Vectors
@@ -306,7 +335,7 @@ r5m=60
 r6m=29.9 #15
 r7m=33.9 #9
 ho=9.1
-print(abang)
+indexw=np.zeros((0,0))
 for z in abang:
     
     #GH Joint
@@ -328,7 +357,7 @@ for z in abang:
     
     #=[r6m,0,0] # horizontal distance from COR to Acromion outer portion
     #r7=[0,r7m,0] #vertical distance from COR to Acromion outer portion
-    acr=[r6m-6,r7m,0]
+    acr=[r6m,r7m,0]
     #b1=n1*np.cos(np.deg2rad(z-bz))
     #indexb=np.append(indexb,b1)
     mf=abs(acr-n)
@@ -345,17 +374,43 @@ for z in abang:
     qua=z-60
     if qua<1:
         abdsix=bm
+    #Deltoid Wrapping.
+    #first to find the vector from the COR to the lateral edge of the humeral resection
+    #we already have the vector to the resection in the form of r1, r2
+    #we now need to find the distance from the axis of the prosthesis altered by r3 to the edge of the lateral humerus.
+    #we now need to incorporate an anatomy vector that is the distance from the IM canal to the lateral humerus.
+    r8=nRa(z)*[r8m,0,0]
+    r8=r8[:,0]
+    dwn=np.array([(r1[0]+r2[0]+r3[0]+r8[0]),(r1[1]+r2[1]+r3[1]+r8[1]),0])
+    
+    #with that vector, we can now find the line of action for the delotid when considering deltoid wrapping
+    mladw=acr-dwn
+    rho=np.rad2deg(np.arctan(mladw[1]/mladw[0]))
+    phi=90-rho
+    dwm=n1*np.cos(np.deg2rad(phi))
+    indexw=np.append(indexw,dwm)
         
 
 abang=np.linspace(0,abrange,step)
-
+plt.plot(abang,indexw,label='LGMH DMRSA DW',color='#47C062',marker='^')
 plt.plot(abang,indexb,color='g',marker='^',label='LGMH DMRSA')
 
 #plt.plot(abang,indexd,label='N Coordinates, DMRSA',color='r',marker='o')
 #plt.plot(abang,indexb,label='B Coordinates, DMRSA',color='r',marker='s')
-plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+plt.legend()
 averagema=np.average(indexb)
-print('Average Moment Arm LGMH',averagema)
+print('Average Moment Arm',averagema)
+
+
+
+
+
+
+
+
+
+
+plt.legend(loc='center left', bbox_to_anchor=(1.0, 0.5))
 
 plt.xlabel('Angle of Abduction (degree)')
 plt.ylabel('Moment Arm (mm)')

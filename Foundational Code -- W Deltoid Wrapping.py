@@ -1,5 +1,13 @@
 # -*- coding: utf-8 -*-
 """
+Created on Tue Apr 11 14:09:22 2023
+
+@author: utah.johnson
+"""
+
+###########with deltoid wrapping
+# -*- coding: utf-8 -*-
+"""
 Created on Thu Apr  6 15:51:15 2023
 
 @author: utah.johnson
@@ -18,17 +26,21 @@ def alpha(b):
     b=b-90
     alpha=np.array(([np.sin(np.deg2rad(b)), np.cos(np.deg2rad(b)), 0], [-np.cos(np.deg2rad(b)), np.sin(np.deg2rad(b)), 0], [ 0, 0, 1]))
     return alpha
-
+def mbh(mf,dwn,bm,dwm):
+    momentarm=bm
+    if mf[0]<dwn[0]:
+        momentarm=dwm
+    return momentarm
 
 
 ####################
 #Glenohumeral Joint Vectors
 #all vectors will be WRT to N coordinate system using rotational matrices
 #Pgba is static vector of glenoid offset
-b=145
+b=135
 b2=b
 #user granted step data based on computational speed
-step=91
+step=90
 #creating abduction angle range
 abrange=140
 bz=b2-90
@@ -40,20 +52,22 @@ abang=np.linspace(0,ghm+bz,step)
 #we need to iterate over the range to find the indexwise moment 
 indexd=np.zeros((0,0))
 indexb=np.zeros((0,0))
-
+indexw=np.zeros((0,0))
+indexm=np.zeros((0,0))
 r1m=38/2
-r2m=20
+r2m=24
 r3m=0
 r4m=30
 r5m=60
 r6m=29.9 #15
 r7m=33.9 #9
-ho=15.6
+ho=9.1
+r8m=20 #IM to LH
 
 for z in abang:
 
     #GH Joint
-    r1=nRa(z)*[21, 0, 0] #Glenoid Application to Glenoid Interface
+    r1=nRa(z)*[r1m, 0, 0] #Glenoid Application to Glenoid Interface
     r1=r1[:,1]
     r2=nRa(z)*[0, -ho, 0] #Resection Plane to Articular Surface
     r2=r2[:,1]
@@ -89,14 +103,62 @@ for z in abang:
     if qua<1:
         abdsix=bm
         
+    #Deltoid Wrapping.
+    #first to find the vector from the COR to the lateral edge of the humeral resection
+    #we already have the vector to the resection in the form of r1, r2
+    #we now need to find the distance from the axis of the prosthesis altered by r3 to the edge of the lateral humerus.
+    #we now need to incorporate an anatomy vector that is the distance from the IM canal to the lateral humerus.
+    r8=nRa(z)*[r8m,0,0]
+    r8=r8[:,0]
+    dwn=np.array([(r1[0]+r2[0]+r3[0]+r8[0]),(r1[1]+r2[1]+r3[1]+r8[1]),0])
+    
+    #with that vector, we can now find the line of action for the delotid when considering deltoid wrapping
+    mladw=acr-dwn
+    rho=np.rad2deg(np.arctan(mladw[1]/mladw[0]))
+    phi=90-rho
+    dwm=n1*np.cos(np.deg2rad(phi))
+    indexw=np.append(indexw,dwm)
+    
+    #muscular behavior
+    #print(mf[0])
+    #print(mladw[0])
+    momentarm=mbh(mf, dwn, bm, dwm)
+    indexm=np.append(indexm,momentarm)
+
+
+posproc=np.zeros((0,0))
+#post processing
+pf=np.polyfit(abang,indexm,3)
+for i in abang:
+    indexm2=pf[0]*i**3+pf[1]*i**2+pf[2]*i**1+pf[3]
+    posproc=np.append(posproc,indexm2)
+    
+        
 
 abang=np.linspace(0,abrange,step)
 
-plt.plot(abang,indexb,color='r',marker='^',label='DMRSA')
+#plt.plot(abang,indexb,color='r',marker='^',label='DMRSA')
     
 
 #plt.plot(abang,indexd,label='N Coordinates, DMRSA',color='r',marker='o')
-#plt.plot(abang,indexb,label='B Coordinates, DMRSA',color='r',marker='s')
-plt.legend()
+plt.plot(abang,indexb,label='No Deltoid Wrapping',color='r',marker='s',markersize=2)
+
+#plt.plot(abang,indexw,label='Deltoid Wrapping',color='b',marker='o')
+averagema=np.average(posproc)
+plt.plot(abang,indexw,color='b',marker='o',markersize=2,label='Deltoid Wrapping')
+plt.plot(abang, indexm,color='y',marker='^',label='Muscular Behavior',markersize=2)
+plt.plot(abang,posproc,color='m',marker='s',label='Muscular Behavior, Post Processed',markersize=2)
+
 averagema=np.average(indexb)
-print('Average Moment Arm',averagema)
+print('Average Moment Arm for Original Code',averagema)
+
+averagema=np.average(indexw)
+print('Average Moment Arm for Deltoid Wrapping',averagema)
+
+averagema=np.average(indexm)
+print('Average Moment Arm for Muscular Behavior',averagema)
+
+averagema=np.average(posproc)
+print('Average Moment Arm for Muscular Behavior, Post Proc',averagema)
+
+plt.legend()
