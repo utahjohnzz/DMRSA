@@ -44,7 +44,7 @@ r8m=46.8/2 #IM to LH
 r1m=38/2
 r2m=20
 r3m=0
-r4m=30
+r4m=15
 r5m=60
 r6m=29.9 #15
 r7m=33.9 #9
@@ -54,7 +54,7 @@ indexw=np.zeros((0,0))
 for z in abang:
     
     #GH Joint
-    r1=[0, 0, 0] #Glenoid Application to Glenoid Interface
+    r1=[r1m, 0, 0] #Glenoid Application to Glenoid Interface
     
     r2=nRa(z)*[0, -ho, 0] #Resection Plane to Articular Surface
     r2=r2[:,1]
@@ -101,6 +101,8 @@ for z in abang:
     #with that vector, we can now find the line of action for the delotid when considering deltoid wrapping
     mladw=acr-dwn
     rho=np.rad2deg(np.arctan(mladw[1]/mladw[0]))
+    if rho<0:
+        rho=rho*-1
     phi=90-rho
     dwm=n1*np.cos(np.deg2rad(phi))
     indexw=np.append(indexw,dwm)
@@ -357,7 +359,7 @@ for z in abang:
     
     #=[r6m,0,0] # horizontal distance from COR to Acromion outer portion
     #r7=[0,r7m,0] #vertical distance from COR to Acromion outer portion
-    acr=[r6m,r7m,0]
+    acr=[r6m-10,r7m,0]
     #b1=n1*np.cos(np.deg2rad(z-bz))
     #indexb=np.append(indexb,b1)
     mf=abs(acr-n)
@@ -386,6 +388,8 @@ for z in abang:
     #with that vector, we can now find the line of action for the delotid when considering deltoid wrapping
     mladw=acr-dwn
     rho=np.rad2deg(np.arctan(mladw[1]/mladw[0]))
+    if rho<0:
+        rho=rho*-1
     phi=90-rho
     dwm=n1*np.cos(np.deg2rad(phi))
     indexw=np.append(indexw,dwm)
