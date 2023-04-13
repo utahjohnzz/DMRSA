@@ -37,7 +37,7 @@ def mbh(mf,dwn,bm,dwm):
 #Glenohumeral Joint Vectors
 #all vectors will be WRT to N coordinate system using rotational matrices
 #Pgba is static vector of glenoid offset
-b=145
+b=150
 b2=b
 #user granted step data based on computational speed
 step=90
@@ -54,15 +54,22 @@ indexd=np.zeros((0,0))
 indexb=np.zeros((0,0))
 indexw=np.zeros((0,0))
 indexm=np.zeros((0,0))
-r1m=38/2
-r2m=15.6 #can be used as ho
+r1m=36/2
+r2m=12 #can be used as ho
 r3m=0
-r4m=38/2
-r5m=61
+r4m=21.4/2
+
+if b>=150:
+    r5m=100
+if b<150 and b>140:
+    r5m=60
+if b<=140:
+    r5m=55
+r5m=75
 r6m=29.9 #15
 r7m=33.9 #9
 #=9.1
-r8m=46.8/2 #IM to LH
+r8m=46.8/2-5 #IM to LH
 
 for z in abang:
 
@@ -74,7 +81,7 @@ for z in abang:
     
     #r2=np.array([r2m, 0, 0])
     r2=nRa(z)*[0,-r2m, 0] #Resection Plane to Articular Surface
-    r2=r2[:,1]
+    r2=r2[:,0]
     
     r3=nRa(z)*[r3m, 0, 0] #Superior/Inferior Placement of Tray
     r3=r3[:,0]
@@ -90,6 +97,9 @@ for z in abang:
     #=[r6m,0,0] # horizontal distance from COR to Acromion outer portion
     #r7=[0,r7m,0] #vertical distance from COR to Acromion outer portion
     acr=[r6m,r7m,0]
+    if b==135:
+        acr=[r6m-10,r7m,0]
+    
     #b1=n1*np.cos(np.deg2rad(z-bz))
     #indexb=np.append(indexb,b1)
     mf=abs(acr-n)

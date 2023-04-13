@@ -35,10 +35,17 @@ indexd=np.zeros((0,0))
 indexb=np.zeros((0,0))
 r8m=46.8/2 #IM to LH
 r1m=38/2
-r2m=20
+r2m=15.6
 r3m=0
-r4m=15
-r5m=60
+r4m=21.4/2
+
+
+if b>=150:
+    r5m=100
+if b<150 and b>140:
+    r5m=75
+if b<=140:
+    r5m=55
 r6m=29.9 #15
 r7m=33.9 #9
 ho=15.6
@@ -102,8 +109,8 @@ for z in abang:
         
 
 abang=np.linspace(0,abrange,step)
-plt.plot(abang,indexw,label='MGLH DMRSA DW',color='#C86262',marker='s')
-plt.plot(abang,indexb,color='r',marker='^',label='MGLH DMRSA')
+plt.plot(abang,indexw,label='Deltoid Wrapping',color='#C86262',marker='s')
+plt.plot(abang,indexb,color='r',marker='^',label='No Deltoid Wrapping')
 
 #plt.plot(abang,indexd,label='N Coordinates, DMRSA',color='r',marker='o')
 #plt.plot(abang,indexb,label='B Coordinates, DMRSA',color='r',marker='s')
@@ -113,3 +120,6 @@ print('Average Moment Arm for Original Code',averagema)
 
 averagema=np.average(indexw)
 print('Average Moment Arm for Deltoid Wrapping',averagema)
+plt.ylabel('Moment Arm (mm)')
+plt.xlabel('Abduction Angle (deg)')
+plt.ylim(0,75)

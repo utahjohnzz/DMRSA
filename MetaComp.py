@@ -102,7 +102,7 @@ for j in b:
         indexd=np.delete(indexd,(0,0))
         plt.plot(abang,indexd,label='LGMH, DMRSA RM',marker='^',color='g')
         plt.legend()
-        plt.title('Moment Arms of Medial Deltoid in Abduction')
+      
         plt.xlabel('Abduction Angle (Degree)')
         plt.ylabel('Moment Arm (mm)')
     
@@ -484,7 +484,7 @@ indexd=np.delete(indexd,(0,0))
 indexpsh=np.delete(indexpsh,(0,0))
 plt.plot(abang,indexd,marker='o')
 #plt.plot(abang,indexpsh)
-plt.title('Moment Arm of Medial Deltoid During Abduction')
+
 plt.xlabel('Abduction Angle (Degree)')
 plt.ylabel('Moment Arm (mm)')
 
