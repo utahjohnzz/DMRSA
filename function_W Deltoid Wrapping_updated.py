@@ -5,7 +5,7 @@ Created on Thu Apr 13 17:32:18 2023
 @author: utahj
 """
 
-def DMRSAmA(b,abrange,r1m,r2m,r3m,r4m,r5m,r6m, r7m,r8m):
+def DMRSAmA(b,abrange,r1m,r2m,r3m,r4m,r5m,r6m, r7m,r8m,r9m):
     import numpy as np
     import matplotlib.pyplot as plt
     #rotational matrices
@@ -56,7 +56,7 @@ def DMRSAmA(b,abrange,r1m,r2m,r3m,r4m,r5m,r6m, r7m,r8m):
         
         #r2=np.array([r2m, 0, 0])
         r2=nRa(z)*[0,-r2m, 0] #Resection Plane to Articular Surface
-        r2=r2[:,0]
+        r2=r2[:,1]
         
         r3=nRa(z)*[r3m, 0, 0] #Superior/Inferior Placement of Tray
         r3=r3[:,0]
@@ -71,9 +71,8 @@ def DMRSAmA(b,abrange,r1m,r2m,r3m,r4m,r5m,r6m, r7m,r8m):
         
         #=[r6m,0,0] # horizontal distance from COR to Acromion outer portion
         #r7=[0,r7m,0] #vertical distance from COR to Acromion outer portion
-        acr=[r6m,r7m,0]
-        if b==135:
-            acr=[r6m-10,r7m,0]
+        acr=[r6m-r9m,r7m,0]
+    
         
         #b1=n1*np.cos(np.deg2rad(z-bz))
         #indexb=np.append(indexb,b1)
@@ -135,13 +134,13 @@ def DMRSAmA(b,abrange,r1m,r2m,r3m,r4m,r5m,r6m, r7m,r8m):
         
 
     #plt.plot(abang,indexd,label='N Coordinates, DMRSA',color='r',marker='o')
-    plt.plot(abang,indexb,label='No Deltoid Wrapping',color='r',marker='s',markersize=2)
+    #plt.plot(abang,indexb,label='No Deltoid Wrapping',color='r',marker='s',markersize=2)
 
     #plt.plot(abang,indexw,label='Deltoid Wrapping',color='b',marker='o')
     averagema=np.average(posproc)
-    plt.plot(abang,indexw,color='b',marker='o',markersize=2,label='Deltoid Wrapping')
-    plt.plot(abang, indexm,color='y',marker='^',label='Muscular Behavior',markersize=2)
-    plt.plot(abang,posproc,color='m',marker='s',label='Muscular Behavior, Post Processed',markersize=2)
+    #plt.plot(abang,indexw,color='b',marker='o',markersize=2,label='Deltoid Wrapping')
+    #plt.plot(abang, indexm,color='y',marker='^',label='Muscular Behavior',markersize=2)
+    #plt.plot(abang,posproc,color='m',marker='s',label='Muscular Behavior, Post Processed',markersize=2)
 
     averagema=np.average(indexb)
     print('Average Moment Arm for Original Code',averagema)
@@ -154,9 +153,44 @@ def DMRSAmA(b,abrange,r1m,r2m,r3m,r4m,r5m,r6m, r7m,r8m):
 
     averagema=np.average(posproc)
     print('Average Moment Arm for Muscular Behavior, Post Proc',averagema)
+    return abang,indexb,indexw,indexm,posproc
 
-    plt.ylim(0,80)
-    plt.xlabel('Abduction Angle (degree)')
-    plt.ylabel('Moment Arm (mm)')
-    plt.legend(loc='center left', bbox_to_anchor=(1.0, 0.5))
-DMRSAmA(145,140,36/2,15.6,0,11.2,75,29, 33,46.8/2-5)
+    
+
+
+import matplotlib.pyplot as plt
+import numpy as np
+
+#[abang,indexb,indexw,indexm,posproc]=DMRSAmA(145,140,32/2,20.9,0,21.4/2,40,29, 33,46.8/2-5,3.9)
+#plt.plot(abang,indexb,color='r',label='Inlay')
+#plt.plot(abang,indexw,color='r')
+#plt.plot(abang,indexm,color='r')
+#plt.plot(abang,posproc,color='r')
+
+print('\n')
+
+
+
+#[abang,indexb,indexw,indexm,posproc]=DMRSAmA(145,140,32/2,26.6,0,21.4/2,40,29, 33,46.8/2-5,3.9)
+#plt.plot(abang,indexb,color='b',label='Onlay')
+#plt.plot(abang,indexw,color='b')
+#plt.plot(abang,indexm,color='b')
+#plt.plot(abang,posproc,color='b')
+
+[abang,indexb,indexw,indexm,posproc]=DMRSAmA(145,140,32/2,20.9,0,21.4/2,40,29, 33,46.8/2-5,3.9)
+
+res=[0,-3,3]
+for i in res:
+    [abang,indexb,indexw,indexm,posproc]=DMRSAmA(145,140,32/2,20.9+15,i,21.4/2,40,29, 33,46.8/2-5,3.9)
+    plt.plot(abang,posproc,label=('Humeral Tray Sup/Inf Offset:',i))
+   
+   
+
+
+
+plt.ylim(0,80)
+plt.xlim(0,140)
+plt.xlabel('Abduction Angle (degree)')
+plt.ylabel('Moment Arm (mm)')
+plt.legend(loc='center left', bbox_to_anchor=(1.0, 0.5))
+

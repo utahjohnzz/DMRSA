@@ -65,7 +65,7 @@ if b<150 and b>140:
     r5m=60
 if b<=140:
     r5m=55
-r5m=75
+r5m=60
 r6m=29.9 #15
 r7m=33.9 #9
 #=9.1
@@ -81,7 +81,7 @@ for z in abang:
     
     #r2=np.array([r2m, 0, 0])
     r2=nRa(z)*[0,-r2m, 0] #Resection Plane to Articular Surface
-    r2=r2[:,0]
+    r2=r2[:,1]
     
     r3=nRa(z)*[r3m, 0, 0] #Superior/Inferior Placement of Tray
     r3=r3[:,0]
