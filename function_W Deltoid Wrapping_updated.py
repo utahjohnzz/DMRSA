@@ -168,6 +168,31 @@ def DMRSAmA(b,abrange,r1m,r2m,r3m,r4m,r5m,r6m, r7m,r8m,r9m):
     
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -188,20 +213,20 @@ print('\n')
 #plt.plot(abang,posproc,color='b')
 
 #[abang,indexb,indexw,indexm,posproc]=DMRSAmA(145,140,32/2,20.9,0,21.4/2,40,29, 33,46.8/2-5,3.9)
-z=10
-res=[0]
+z=7.5
+res=[-3,0,3]
 for i in res:
     print('\n')
     [abang,indexb,indexw,indexm,posproc,nina]=DMRSAmA(145,140,32/2,20.9+z,i,21.4/2,40,29, 33,46.8/2-5,3.9)
     
-    plt.plot(abang,posproc,label=('Inlay Configuration with +10 Lateralization'))
+    plt.plot(abang,posproc,label=('Humeral Tray Sup/Inf Offset:',i))
    
 
 
-[abang,indexb,indexw,indexm,posproc,nina]=DMRSAmA(145,140,32/2,26.6+0,0,21.4/2,40,29, 33,46.8/2-5,3.9)
-plt.plot(abang,posproc,label=('Onlay Configuration with +0 Lateralization'))
+#[abang,indexb,indexw,indexm,posproc,nina]=DMRSAmA(145,140,32/2,26.6+0,0,21.4/2,40,29, 33,46.8/2-5,3.9)
+#plt.plot(abang,posproc,label=('Onlay Configuration with +0 Lateralization'))
 
-
+plt.title('+7.5 Humeral Lateralization')
 
 plt.ylim(0,80)
 plt.xlim(0,140)
@@ -210,4 +235,4 @@ plt.ylabel('Moment Arm (mm)')
 plt.legend(loc='center left', bbox_to_anchor=(1.0, 0.5))
 legend = plt.gca().get_legend()
 for handle, label in zip(legend.legendHandles, legend.get_texts()):
-    label.set_text(label.get_text().replace('(', '').replace(')', '').replace("'", ""))
+    label.set_text(label.get_text().replace('(', '').replace(')', '').replace("'", "").replace(",",""))
