@@ -6,6 +6,7 @@ Created on Thu Apr 13 17:32:18 2023
 """
 
 def DMRSAmA(b,abrange,r1m,r2m,r3m,r4m,r5m,r6m, r7m,r8m,r9m):
+    
     import numpy as np
     import matplotlib.pyplot as plt
     #rotational matrices
@@ -29,11 +30,11 @@ def DMRSAmA(b,abrange,r1m,r2m,r3m,r4m,r5m,r6m, r7m,r8m,r9m):
     #Glenohumeral Joint Vectors
     #all vectors will be WRT to N coordinate system using rotational matrices
     #Pgba is static vector of glenoid offset
-    b2=b
+    
     #user granted step data based on computational speed
     step=90
     #creating abduction angle range
-    bz=b2-90
+    bz=b-90
     rthm=1.8 #how much GH:Scapular
     ghm=abrange-abrange/((1+rthm)/rthm) #how much purely GH rotation occurs
     abang=np.linspace(0,ghm+bz,step)
@@ -143,17 +144,26 @@ def DMRSAmA(b,abrange,r1m,r2m,r3m,r4m,r5m,r6m, r7m,r8m,r9m):
     #plt.plot(abang,posproc,color='m',marker='s',label='Muscular Behavior, Post Processed',markersize=2)
 
     averagema=np.average(indexb)
-    print('Average Moment Arm for Original Code',averagema)
+    #print('Average Moment Arm for Original Code',averagema)
 
     averagema=np.average(indexw)
-    print('Average Moment Arm for Deltoid Wrapping',averagema)
+   # print('Average Moment Arm for Deltoid Wrapping',averagema)
 
     averagema=np.average(indexm)
-    print('Average Moment Arm for Muscular Behavior',averagema)
+    #print('Average Moment Arm for Muscular Behavior',averagema)
 
-    averagema=np.average(posproc)
-    print('Average Moment Arm for Muscular Behavior, Post Proc',averagema)
-    return abang,indexb,indexw,indexm,posproc
+    #averagema=np.average(posproc)
+    countf=0
+    for angle in abang:
+        #print(abs(angle-90))
+        if abs(angle-90)<=.5:
+            nina=posproc[countf]
+            break
+        countf+=1
+    #print('Average Moment Arm for Muscular Behavior, Post Proc',averagema)
+    maz=posproc[0]
+    print('The moment arm at 0 degrees is',maz,'and the moment arm at 90 degrees is',nina)
+    return abang,indexb,indexw,indexm,posproc,nina
 
     
 
@@ -177,14 +187,19 @@ print('\n')
 #plt.plot(abang,indexm,color='b')
 #plt.plot(abang,posproc,color='b')
 
-[abang,indexb,indexw,indexm,posproc]=DMRSAmA(145,140,32/2,20.9,0,21.4/2,40,29, 33,46.8/2-5,3.9)
-
-res=[0,-3,3]
+#[abang,indexb,indexw,indexm,posproc]=DMRSAmA(145,140,32/2,20.9,0,21.4/2,40,29, 33,46.8/2-5,3.9)
+z=10
+res=[0]
 for i in res:
-    [abang,indexb,indexw,indexm,posproc]=DMRSAmA(145,140,32/2,20.9+15,i,21.4/2,40,29, 33,46.8/2-5,3.9)
-    plt.plot(abang,posproc,label=('Humeral Tray Sup/Inf Offset:',i))
+    print('\n')
+    [abang,indexb,indexw,indexm,posproc,nina]=DMRSAmA(145,140,32/2,20.9+z,i,21.4/2,40,29, 33,46.8/2-5,3.9)
+    
+    plt.plot(abang,posproc,label=('Inlay Configuration with +10 Lateralization'))
    
-   
+
+
+[abang,indexb,indexw,indexm,posproc,nina]=DMRSAmA(145,140,32/2,26.6+0,0,21.4/2,40,29, 33,46.8/2-5,3.9)
+plt.plot(abang,posproc,label=('Onlay Configuration with +0 Lateralization'))
 
 
 
@@ -193,4 +208,6 @@ plt.xlim(0,140)
 plt.xlabel('Abduction Angle (degree)')
 plt.ylabel('Moment Arm (mm)')
 plt.legend(loc='center left', bbox_to_anchor=(1.0, 0.5))
-
+legend = plt.gca().get_legend()
+for handle, label in zip(legend.legendHandles, legend.get_texts()):
+    label.set_text(label.get_text().replace('(', '').replace(')', '').replace("'", ""))
