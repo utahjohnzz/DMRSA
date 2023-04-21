@@ -3,211 +3,154 @@
 Created on Thu Apr 13 17:32:18 2023
 
 @author: utahj
+
+Notes:
+
+This guide will hopefully make navigating, using, and understanding the files and code associated with the DMRSA archetype easier.
+
+Initial Steps
+
+Github
+The first thing you should consider doing is probably installing Github onto your computer. This is fairly easy, and using the program itself is also very straight forward. Github is a cloudbased manager of code files that allow for multiple users to edit and view code. This is the best way to manage code files and it is highly user friendly. The Github for the DMRSA codes are in a private repository which I would have to give users access to. This is a link to the repository. 
+
+Probably the safest thing to do is to clone the new function branch so that baselines of all the code exists in the case something gets messed up with the files.
+
+Python
+Python has a number of differences in comparison to Matlab so I would highly recommend getting associated with the language. There's a billion videos and websites online, and my code does not really go beyond the basics of Python.
+
+I would recommend installing Spyder through Anaconda as it is probably the simplest IDE and it is the closest thing to Matlab you can get with Python. Spyder is highly user friendly but there is also a lot of content on it to learn how to use it properly.
+
+Files
+The repository contains a large amount of different files reflecting many different versions of the build. The two most important of the files that are the most up to date include function_W Deltoid Wrapping_updated.py and Foundational Code -- W Deltoid Wrapping_updated.py. One is a function form of the other which allows for more streamlined trial assessment. The function lets you implement any variation of parameters and run several thousand incremental assortments quickly with the proper code to run it. An example of this is an earlier build in function_updated_anatomical_insertion_B_coordinates.py if you ever desire to model a similar process.
+
+Many of the early files are full of spaghetti code and are honestly pretty useless for experimentation so I would not worry about them.
+
+Code
+I believe every important line of code has notes next to it. I will try to explain them more in detail in an external document.
+
+
+
+
+
+
+
+
+
+
+
+
+
 """
 
 def DMRSAmA(b,abrange,r1m,r2m,r3m,r4m,r5m,r6m, r7m,r8m,r9m):
-    
-    import numpy as np
-    import matplotlib.pyplot as plt
+        
+    ###############Initial Setup
+    import numpy as np #library for math functions
+    import matplotlib.pyplot as plt #library for plotting
     #rotational matrices
     #z is theta
     #b is the neck angle
-    def nRa(z):
-        nRa=np.array(([np.cos(np.deg2rad(z)), -np.sin(np.deg2rad(z)), 0], [np.sin(np.deg2rad(z)), np.cos(np.deg2rad(z)), 0], [ 0, 0, 1]))
-        return nRa
-    def alpha(b):
-        b=b-90
-        alpha=np.array(([np.sin(np.deg2rad(b)), np.cos(np.deg2rad(b)), 0], [-np.cos(np.deg2rad(b)), np.sin(np.deg2rad(b)), 0], [ 0, 0, 1]))
-        return alpha
-    def mbh(mf,dwn,bm,dwm):
-        momentarm=bm
-        if mf[0]<dwn[0]:
-            momentarm=dwm
-        return momentarm
+    def nRa(z): #this converts N to A coordinates as a function of the abduction angle
+        nRa=np.array(([np.cos(np.deg2rad(z)), -np.sin(np.deg2rad(z)), 0], [np.sin(np.deg2rad(z)), np.cos(np.deg2rad(z)), 0], [ 0, 0, 1])) #this was found by hand
+        return nRa #returns the rotational matrix at that specific angle
+    def alpha(b): #this converts B to A coordinates as a function of the neck angle
+        b=b-90 #required for rotation matrix calculation
+        alpha=np.array(([np.sin(np.deg2rad(b)), np.cos(np.deg2rad(b)), 0], [-np.cos(np.deg2rad(b)), np.sin(np.deg2rad(b)), 0], [ 0, 0, 1])) #this was found by hand
+        return alpha #returns the rotational matrix at that specific neck angle
+    def mbh(mf,dwn,bm,dwm): #this is the muscle behavior function that decides which moment arm to use in the case deltoid wrapping exists at the abduction angle
+        momentarm=bm #initially it just assumes the moment arm is without deltoid wrapping
+        if mf[0]<dwn[0]: #this detects if the vector that relates to the deltoid insertion intersects the vector of the greater tuberosity
+            momentarm=dwm #if there is interesection, deltoid wrapping is confirmed and the moment arm is changed
+        return momentarm 
 
 
     ####################
-    #Glenohumeral Joint Vectors
-    #all vectors will be WRT to N coordinate system using rotational matrices
-    #Pgba is static vector of glenoid offset
-    
-    #user granted step data based on computational speed
-    step=90
+    #Initialization
+    step=90 #user granted step data based on computational speed
     #creating abduction angle range
-    bz=b-90
+    bz=b-90 #refer to documentation
     rthm=1.8 #how much GH:Scapular
     ghm=abrange-abrange/((1+rthm)/rthm) #how much purely GH rotation occurs
-    abang=np.linspace(0,ghm+bz,step)
-    #if b==155:
-        #abang=np.linspace(0,ghm+bz-20,step)
+    abang=np.linspace(0,ghm+bz,step) #refer to documentation
     #we need to iterate over the range to find the indexwise moment 
-    indexd=np.zeros((0,0))
-    indexb=np.zeros((0,0))
-    indexw=np.zeros((0,0))
-    indexm=np.zeros((0,0))
-    #=9.1
-
-    for z in abang:
-
-        #GH Joint
-        r1=np.array([r1m, 0, 0]) #Glenoid Application to Glenoid Interface
-        #r1=nRa(z)*np.array([0,-r1m, 0]) #Glenoid Application to Glenoid Interface
-       
-        #r1=r1[:,1]
-        
-        #r2=np.array([r2m, 0, 0])
+    indexd=np.zeros((0,0)) #sets up vector to append to
+    indexb=np.zeros((0,0)) #sets up vector to append to
+    indexw=np.zeros((0,0)) #sets up vector to append to
+    indexm=np.zeros((0,0)) #sets up vector to append to
+    
+    ######################GH Joint
+    for z in abang: #abuction range for the glenohumeral joint
+        r1=np.array([r1m, 0, 0]) #Glenoid Application to Glenoid Interface     
         r2=nRa(z)*[0,-r2m, 0] #Resection Plane to Articular Surface
-        r2=r2[:,1]
-        
+        r2=r2[:,1] #extracts just the N coordinates from the 3x3 matrix
         r3=nRa(z)*[r3m, 0, 0] #Superior/Inferior Placement of Tray
-        r3=r3[:,0]
-        
-        r4=nRa(z)*alpha(b)*[r4m,0,0] #IM Axis to insertion
-        r4=r4[:,0]
+        r3=r3[:,0] #extracts just the N coordinates from the 3x3 matrix
+        r4=nRa(z)*alpha(b)*[r4m,0,0] #IM axis to the deltoid insertion
+        r4=r4[:,0] #extracts just the N coordinates from the 3x3 matrix
         r5=nRa(z)*alpha(b)*[0,-r5m,0] #Resection plane to location of insertion
-        r5=r5[:,1]
+        r5=r5[:,1] #extracts just the N coordinates from the 3x3 matrix
         n1=r1[0]+r2[0]+r3[0]+r4[0]+r5[0] #moment arm in N coordinates
         n2=r1[1]+r2[1]+r3[1]+r4[1]+r5[1] #moment arm in N coordinates
-        n=np.array([n1,n2,0])
-        
-        #=[r6m,0,0] # horizontal distance from COR to Acromion outer portion
-        #r7=[0,r7m,0] #vertical distance from COR to Acromion outer portion
-        acr=[r6m-r9m,r7m,0]
-    
-        
-        #b1=n1*np.cos(np.deg2rad(z-bz))
-        #indexb=np.append(indexb,b1)
-        mf=abs(acr-n)
-        
-        beta=np.rad2deg(np.arctan(mf[1]/mf[0]))
-        zeta=90-beta
-        bm=n1*np.cos(np.deg2rad(zeta))
-        beta=np.rad2deg(np.arcsin(bm/np.sqrt(n1**2+n2**2)))
-        
-        indexd=np.append(indexd,n1)
-        indexb=np.append(indexb,bm)
-        if z==0:
-            abdz=bm
-        qua=z-60
-        if qua<1:
-            abdsix=bm
-            
-        #Deltoid Wrapping.
-        #first to find the vector from the COR to the lateral edge of the humeral resection
-        #we already have the vector to the resection in the form of r1, r2
-        #we now need to find the distance from the axis of the prosthesis altered by r3 to the edge of the lateral humerus.
-        #we now need to incorporate an anatomy vector that is the distance from the IM canal to the lateral humerus.
-        r8=nRa(z)*[r8m,0,0]
-        r8=r8[:,0]
-        dwn=np.array([(r1[0]+r2[0]+r3[0]+r8[0]),(r1[1]+r2[1]+r3[1]+r8[1]),0])
-        
+        n=np.array([n1,n2,0]) #creates a vector for the N coordinates
+        acr=[r6m-r9m,r7m,0] #position of the acromion crest (deltoid origin) in relation to the COR. Allows for offset of the COR (see documentation)
+        mf=abs(acr-n) #Vector for the line of action for the deltoid
+        beta=np.rad2deg(np.arctan(mf[1]/mf[0])) #Part of the hand derived geometric relationship to find the moment arm
+        zeta=90-beta #angle from the COR to the perpindicular vector of the muscle line of action
+        bm=n1*np.cos(np.deg2rad(zeta)) #calculated the magnitude of the moment arm WRT to the N1 coordinate    
+        indexd=np.append(indexd,n1) #appends to the vector
+        indexb=np.append(indexb,bm) #appends to the vector
+
+        #######################Deltoid Wrapping.
+        r8=nRa(z)*[r8m,0,0] #this is the vector that relates the IM axis at the resection plane to the greater tuberosity in the A coordinate
+        r8=r8[:,0] #extracts just the N coordinates from the 3x3 matrix
+        dwn=np.array([(r1[0]+r2[0]+r3[0]+r8[0]),(r1[1]+r2[1]+r3[1]+r8[1]),0]) #this finds the vector from the COR to the outside edge of the greater tuberosity
         #with that vector, we can now find the line of action for the delotid when considering deltoid wrapping
-        mladw=acr-dwn
-        rho=np.rad2deg(np.arctan(mladw[1]/mladw[0]))
-        if rho<0:
-            rho=rho*-1
-        phi=90-rho
-        dwm=n1*np.cos(np.deg2rad(phi))
-        
-        #print('z:',z,'mladw:',mladw,'dwn:',dwn,'phi:',phi,'dwm:',dwm,'rho:',rho,'\n')
-        indexw=np.append(indexw,dwm)
-        
-        #muscular behavior
-        #print(mf[0])
-        #print(mladw[0])
-        momentarm=mbh(mf, dwn, bm, dwm)
-        indexm=np.append(indexm,momentarm)
+        mladw=acr-dwn #uses vector math to relate the found vector from the COR to the greater tuberosity to the origin of the deltoid at the acromion
+        rho=np.rad2deg(np.arctan(mladw[1]/mladw[0])) #finds the angle of this vector WRT to the original N coordinate system
+        if rho<0: #this next part is required because I found that due to trignometric relationships magnitudes which switch to negative between two data points and thus would cause the moment arm to be negative randomly.
+            rho=rho*-1 #this just corrects it and has no effect on the moment arm magnitude
+        phi=90-rho #finds the angle of the vector that relates the COR to the perpindicular line of action of the deltoid wrapping muscle vector
+        dwm=n1*np.cos(np.deg2rad(phi)) #this is the deltoid wrapping moment arm found from the original N1 magnitude
+        indexw=np.append(indexw,dwm) #appends to vector
+        momentarm=mbh(mf, dwn, bm, dwm) #this uses the muscle behavior function to figure out which moment arm philospophy is appropriate
+        indexm=np.append(indexm,momentarm) #appends to vector
         
 
-
-    posproc=np.zeros((0,0))
     #post processing
-    pf=np.polyfit(abang,indexm,3)
-    for i in abang:
-        indexm2=pf[0]*i**3+pf[1]*i**2+pf[2]*i**1+pf[3]
-        posproc=np.append(posproc,indexm2)
+    posproc=np.zeros((0,0)) #refer to documentation  
+    pf=np.polyfit(abang,indexm,3) #fits a third degree polynomial to the choppy muscular behavior results
+    for i in abang: #goes through each abduction angle data point
+        indexm2=pf[0]*i**3+pf[1]*i**2+pf[2]*i**1+pf[3] #fits the data
+        posproc=np.append(posproc,indexm2) #post processing
         
-            
-
-    abang=np.linspace(0,abrange,step)
-
-    #plt.plot(abang,indexb,color='r',marker='^',label='DMRSA')
-        
-
-    #plt.plot(abang,indexd,label='N Coordinates, DMRSA',color='r',marker='o')
-    #plt.plot(abang,indexb,label='No Deltoid Wrapping',color='r',marker='s',markersize=2)
-
-    #plt.plot(abang,indexw,label='Deltoid Wrapping',color='b',marker='o')
-    averagema=np.average(posproc)
-    #plt.plot(abang,indexw,color='b',marker='o',markersize=2,label='Deltoid Wrapping')
-    #plt.plot(abang, indexm,color='y',marker='^',label='Muscular Behavior',markersize=2)
-    #plt.plot(abang,posproc,color='m',marker='s',label='Muscular Behavior, Post Processed',markersize=2)
-
-    averagema=np.average(indexb)
-    #print('Average Moment Arm for Original Code',averagema)
-
-    averagema=np.average(indexw)
-   # print('Average Moment Arm for Deltoid Wrapping',averagema)
-
-    averagema=np.average(indexm)
-    #print('Average Moment Arm for Muscular Behavior',averagema)
-
-    #averagema=np.average(posproc)
-    countf=0
-    for angle in abang:
+        #this method has the same magnitude error, but typically may vary indice wise towards the end of the abduction range.
+    abang=np.linspace(0,abrange,step) #this is required to reset the abduction range for plotting purposes
+    
+    countf=0 #starts a 0 counter
+    for angle in abang: #iterates through entire abduction range
         #print(abs(angle-90))
-        if abs(angle-90)<=.5:
-            nina=posproc[countf]
-            break
+        if abs(angle-90)<=.5: #this finds the data point at the 90 degree angle
+            nina=posproc[countf] #calculates the moment arm at the 90th degree in the abduction range
+            break #stops the loop once it is found
         countf+=1
-    #print('Average Moment Arm for Muscular Behavior, Post Proc',averagema)
-    maz=posproc[0]
-    print('The moment arm at 0 degrees is',maz,'and the moment arm at 90 degrees is',nina)
-    return abang,indexb,indexw,indexm,posproc,nina
+    maz=posproc[0] #moment arm at 0
+    return abang,indexb,indexw,indexm,posproc #this is the returned values
 
     
 
 
+
+
+#you can delete this but I left it in as a template to know how to plot and activate the function. None of this is part of the calculation/the function itself.
 import matplotlib.pyplot as plt
 import numpy as np
 
-#[abang,indexb,indexw,indexm,posproc]=DMRSAmA(145,140,32/2,20.9,0,21.4/2,40,29, 33,46.8/2-5,3.9)
-#plt.plot(abang,indexb,color='r',label='Inlay')
-#plt.plot(abang,indexw,color='r')
-#plt.plot(abang,indexm,color='r')
-#plt.plot(abang,posproc,color='r')
-
-print('\n')
-
-
-
-#[abang,indexb,indexw,indexm,posproc]=DMRSAmA(145,140,32/2,26.6,0,21.4/2,40,29, 33,46.8/2-5,3.9)
-#plt.plot(abang,indexb,color='b',label='Onlay')
-#plt.plot(abang,indexw,color='b')
-#plt.plot(abang,indexm,color='b')
-#plt.plot(abang,posproc,color='b')
-
-#[abang,indexb,indexw,indexm,posproc]=DMRSAmA(145,140,32/2,20.9,0,21.4/2,40,29, 33,46.8/2-5,3.9)
-z=10
-res=[0]
-for i in res:
-    print('\n')
-    [abang,indexb,indexw,indexm,posproc,nina]=DMRSAmA(145,140,32/2,20.9+z,i,21.4/2,40,29, 33,46.8/2-5,3.9)
-    
-    plt.plot(abang,posproc,label=('Inlay Configuration with +10 Lateralization'))
-   
-
-
-[abang,indexb,indexw,indexm,posproc,nina]=DMRSAmA(145,140,32/2,26.6+0,0,21.4/2,40,29, 33,46.8/2-5,3.9)
-plt.plot(abang,posproc,label=('Onlay Configuration with +0 Lateralization'))
-
-
-
+[abang,indexb,indexw,indexm,posproc]=DMRSAmA(145,140,32/2,20.9,0,21.4/2,40,29, 33,46.8/2-5,3.9)
+plt.plot(abang,indexb,color='r',label='No Deltoid Wrapping')
+plt.plot(abang,indexw,color='b',label='Deltoid Wrapping')
+plt.plot(abang,indexm,color='y',label='Muscle Behavior')
+plt.plot(abang,posproc,color='g',label='Muscle Behavior, Post Processed')
+plt.legend()
 plt.ylim(0,80)
 plt.xlim(0,140)
-plt.xlabel('Abduction Angle (degree)')
-plt.ylabel('Moment Arm (mm)')
-plt.legend(loc='center left', bbox_to_anchor=(1.0, 0.5))
-legend = plt.gca().get_legend()
-for handle, label in zip(legend.legendHandles, legend.get_texts()):
-    label.set_text(label.get_text().replace('(', '').replace(')', '').replace("'", ""))
+
