@@ -52,7 +52,7 @@ def DMRSAmA(b,abrange,r1m,r2m,r3m,r4m,r5m,r6m, r7m,r8m,r9m,tb,rc):
         r3=r3[:,0] #extracts just the N coordinates from the 3x3 matrix
         r4=nRa(z)*alpha(b)*[r4m,0,0] #IM axis to the deltoid insertion
         r4=r4[:,0] #extracts just the N coordinates from the 3x3 matrix
-        di=tb-rc #takes the length from the top of the humerus to the insertion and subtracts the resection depth
+        di=tb-rc/np.sin(np.deg2rad(45)) #takes the length from the top of the humerus to the insertion and subtracts the resection depth
         r5=nRa(z)*alpha(b)*[0,-di,0] #Resection plane to location of insertion
         r5=r5[:,1] #extracts just the N coordinates from the 3x3 matrix
         n1=r1[0]+r2[0]+r3[0]+r4[0]+r5[0] #moment arm in N coordinates
@@ -113,7 +113,7 @@ You can delete this next section of code but I left it in as a template to know 
 import matplotlib.pyplot as plt
 import numpy as np
 #DMRSAmA(b,abrange,r1m,r2m,r3m,r4m,r5m,r6m, r7m,r8m,r9m,tb,rc)
-[abang,indexb,indexw,indexm,posproc]=DMRSAmA(135,140,32/2,20.9,0,21.4/2,40,29, 33,46.8/2+10,3.9,70,50)
+[abang,indexb,indexw,indexm,posproc]=DMRSAmA(145,140,32/2,7.5,0,21.4/2,40,29, 33,46.8/2+20,3.9,60,19.5)
 plt.plot(abang,indexb,color='r',label='No Deltoid Wrapping')
 plt.plot(abang,indexw,color='b',label='Deltoid Wrapping')
 plt.plot(abang,indexm,color='y',label='Muscle Behavior')
