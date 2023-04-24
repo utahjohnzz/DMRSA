@@ -107,6 +107,7 @@ def DMRSAmA(b,abrange,r1m,r2m,r3m,r4m,r5m,r6m, r7m,r8m,r9m,tb,rc):
 
 
 
+<<<<<<< HEAD
 """
 You can delete this next section of code but I left it in as a template to know how to plot and activate the function. None of this is part of the calculation/the function itself.
 """
@@ -122,3 +123,71 @@ plt.legend()
 plt.ylim(0,80)
 plt.xlim(0,140)
 
+=======
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import matplotlib.pyplot as plt
+import numpy as np
+
+#[abang,indexb,indexw,indexm,posproc]=DMRSAmA(145,140,32/2,20.9,0,21.4/2,40,29, 33,46.8/2-5,3.9)
+#plt.plot(abang,indexb,color='r',label='Inlay')
+#plt.plot(abang,indexw,color='r')
+#plt.plot(abang,indexm,color='r')
+#plt.plot(abang,posproc,color='r')
+
+print('\n')
+
+
+
+#[abang,indexb,indexw,indexm,posproc]=DMRSAmA(145,140,32/2,26.6,0,21.4/2,40,29, 33,46.8/2-5,3.9)
+#plt.plot(abang,indexb,color='b',label='Onlay')
+#plt.plot(abang,indexw,color='b')
+#plt.plot(abang,indexm,color='b')
+#plt.plot(abang,posproc,color='b')
+
+#[abang,indexb,indexw,indexm,posproc]=DMRSAmA(145,140,32/2,20.9,0,21.4/2,40,29, 33,46.8/2-5,3.9)
+z=7.5
+res=[-3,0,3]
+for i in res:
+    print('\n')
+    [abang,indexb,indexw,indexm,posproc,nina]=DMRSAmA(145,140,32/2,20.9+z,i,21.4/2,40,29, 33,46.8/2-5,3.9)
+    
+    plt.plot(abang,posproc,label=('Humeral Tray Sup/Inf Offset:',i))
+   
+
+
+#[abang,indexb,indexw,indexm,posproc,nina]=DMRSAmA(145,140,32/2,26.6+0,0,21.4/2,40,29, 33,46.8/2-5,3.9)
+#plt.plot(abang,posproc,label=('Onlay Configuration with +0 Lateralization'))
+
+plt.title('+7.5 Humeral Lateralization')
+
+plt.ylim(0,80)
+plt.xlim(0,140)
+plt.xlabel('Abduction Angle (degree)')
+plt.ylabel('Moment Arm (mm)')
+plt.legend(loc='center left', bbox_to_anchor=(1.0, 0.5))
+legend = plt.gca().get_legend()
+for handle, label in zip(legend.legendHandles, legend.get_texts()):
+    label.set_text(label.get_text().replace('(', '').replace(')', '').replace("'", "").replace(",",""))
+>>>>>>> 933ab7e2d05ec0cbc1405a90d83fa02e13f83cc3
