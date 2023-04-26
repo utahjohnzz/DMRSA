@@ -75,7 +75,7 @@ def DMRSAmA(b,abrange,r1m,r2m,r3m,r4m,r5m,r6m, r7m,r8m,r9m,tb,rc):
         if rho<0: #this next part is required because I found that due to trignometric relationships magnitudes which switch to negative between two data points and thus would cause the moment arm to be negative randomly.
             rho=rho*-1 #this just corrects it and has no effect on the moment arm magnitude
         phi=90-rho #finds the angle of the vector that relates the COR to the perpindicular line of action of the deltoid wrapping muscle vector
-        dwm=n1*np.cos(np.deg2rad(phi)) #this is the deltoid wrapping moment arm found from the original N1 magnitude
+        dwm=dwn[0]*np.cos(np.deg2rad(phi)) #this is the deltoid wrapping moment arm found from the original N1 magnitude
         indexw=np.append(indexw,dwm) #appends to vector
         momentarm=mbh(mf, dwn, bm, dwm) #this uses the muscle behavior function to figure out which moment arm philospophy is appropriate
         indexm=np.append(indexm,momentarm) #appends to vector
@@ -112,7 +112,7 @@ You can delete this next section of code but I left it in as a template to know 
 import matplotlib.pyplot as plt
 import numpy as np
 #DMRSAmA(b,abrange,r1m,r2m,r3m,r4m,r5m,r6m, r7m,r8m,r9m,tb,rc)
-[abang,indexb,indexw,indexm,posproc]=DMRSAmA(135,140,32/2,7.5,0,21.4/2,40,29, 33,46.8/2+20,3.9,80,30)
+[abang,indexb,indexw,indexm,posproc]=DMRSAmA(145,140,32/2,16.5,0,21.4/2,40,29, 33,46.8/2+20,3.9,90,30)
 plt.plot(abang,indexb,color='r',label='No Deltoid Wrapping')
 plt.plot(abang,indexw,color='b',label='Deltoid Wrapping')
 plt.plot(abang,indexm,color='y',label='Muscle Behavior')
