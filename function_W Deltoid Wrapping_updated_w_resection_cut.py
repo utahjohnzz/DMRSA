@@ -16,20 +16,25 @@ def DMRSAmA(b,abrange,r1m,r2m,r3m,r4m,r5m,r6m, r7m,r8m,r9m,tb,rc):
     #z is theta
     #b is the neck angle
     def nRa(z): #this converts N to A coordinates as a function of the abduction angle
-        nRa=np.array(([np.cos(np.deg2rad(z)), -np.sin(np.deg2rad(z)), 0], [np.sin(np.deg2rad(z)), np.cos(np.deg2rad(z)), 0], [ 0, 0, 1])) #this was found by hand
+        z=np.deg2rad(z) #converts to radians
+        nRa=np.array(([np.cos(z), -np.sin(z), 0], 
+                      [np.sin(z), np.cos(z), 0], 
+                      [ 0, 0, 1])) #this was found by hand
         return nRa #returns the rotational matrix at that specific angle
     def alpha(b): #this converts B to A coordinates as a function of the neck angle
         b=b-90 #required for rotation matrix calculation
-        alpha=np.array(([np.sin(np.deg2rad(b)), np.cos(np.deg2rad(b)), 0], [-np.cos(np.deg2rad(b)), np.sin(np.deg2rad(b)), 0], [ 0, 0, 1])) #this was found by hand
+        b=np.deg2rad(b) #converts to radians
+        alpha=np.array(([np.sin(b), np.cos(b), 0], 
+                        [-np.cos(b), np.sin(b), 0], 
+                        [ 0, 0, 1])) #this was found by hand
         return alpha #returns the rotational matrix at that specific neck angle
-    def mbh(mf,dwn,bm,dwm): #this is the muscle behavior function that decides which moment arm to use in the case deltoid wrapping exists at the abduction angle
+    def mbh(mf,dwn,bm,dwm,z): #this is the muscle behavior function that decides which moment arm to use in the case deltoid wrapping exists at the abduction angle
         momentarm=bm #initially it just assumes the moment arm is without deltoid wrapping
         if mf[0]<dwn[0]: #this detects if the vector that relates to the deltoid insertion intersects the vector of the greater tuberosity
             momentarm=dwm #if there is interesection, deltoid wrapping is confirmed and the moment arm is changed
         return momentarm 
 
-    ####################
-    #Initialization
+    #####################Initialization
     step=90 #user granted step data based on computational speed
     #creating abduction angle range
     bz=b-90 #refer to documentation
@@ -75,13 +80,13 @@ def DMRSAmA(b,abrange,r1m,r2m,r3m,r4m,r5m,r6m, r7m,r8m,r9m,tb,rc):
         if rho<0: #this next part is required because I found that due to trignometric relationships magnitudes which switch to negative between two data points and thus would cause the moment arm to be negative randomly.
             rho=rho*-1 #this just corrects it and has no effect on the moment arm magnitude
         phi=90-rho #finds the angle of the vector that relates the COR to the perpindicular line of action of the deltoid wrapping muscle vector
-        dwm=dwn[0]*np.cos(np.deg2rad(phi)) #this is the deltoid wrapping moment arm found from the original N1 magnitude
+        dwm=n[0]*np.cos(np.deg2rad(phi)) #this is the deltoid wrapping moment arm found from the original N1 magnitude
         indexw=np.append(indexw,dwm) #appends to vector
-        momentarm=mbh(mf, dwn, bm, dwm) #this uses the muscle behavior function to figure out which moment arm philospophy is appropriate
+        momentarm=mbh(mf, dwn, bm, dwm,z) #this uses the muscle behavior function to figure out which moment arm philospophy is appropriate
         indexm=np.append(indexm,momentarm) #appends to vector
         
 
-    #post processing
+    ##############Post processing
     posproc=np.zeros((0,0)) #refer to documentation  
     pf=np.polyfit(abang,indexm,3) #fits a third degree polynomial to the choppy muscular behavior results
     for i in abang: #goes through each abduction angle data point
@@ -99,7 +104,8 @@ def DMRSAmA(b,abrange,r1m,r2m,r3m,r4m,r5m,r6m, r7m,r8m,r9m,tb,rc):
             break #stops the loop once it is found
         countf+=1
     maz=posproc[0] #moment arm at 0
-    return abang,indexb,indexw,indexm,posproc #this is the returned values
+    avm=np.average(posproc)
+    return abang,indexb,indexw,indexm,posproc,nina,maz,avm #this is the returned values
 
     
 
@@ -109,16 +115,40 @@ def DMRSAmA(b,abrange,r1m,r2m,r3m,r4m,r5m,r6m, r7m,r8m,r9m,tb,rc):
 """
 You can delete this next section of code but I left it in as a template to know how to plot and activate the function. None of this is part of the calculation/the function itself.
 """
+
 import matplotlib.pyplot as plt
 import numpy as np
-#DMRSAmA(b,abrange,r1m,r2m,r3m,r4m,r5m,r6m, r7m,r8m,r9m,tb,rc)
-[abang,indexb,indexw,indexm,posproc]=DMRSAmA(145,140,32/2,16.5,0,21.4/2,40,29, 33,46.8/2+20,3.9,90,30)
-plt.plot(abang,indexb,color='r',label='No Deltoid Wrapping')
-plt.plot(abang,indexw,color='b',label='Deltoid Wrapping')
-plt.plot(abang,indexm,color='y',label='Muscle Behavior')
-plt.plot(abang,posproc,color='g',label='Muscle Behavior, Post Processed')
-plt.legend()
-plt.ylim(0,80)
-plt.xlim(0,140)
-legend=plt.legend(bbox_to_anchor=(1.04, 1), loc="upper left")
-
+import seaborn as sns  
+fig = plt.figure(figsize=(8, 6), facecolor='black')
+#DMRSAmA(b,abrange,r1m,r2m,r3m,r4m,r5m,r6m, r7m,r8m,r9m,tb,rc) This is how the function is called
+[abang,indexb,indexw,indexm,posproc,nina,maz,avm]=DMRSAmA(155,140,32/2,15,0,21.4/2,40,29, 33,46.8/2+20,3.9,80,30) #This calls the function with the specified parameters and outputs the values as each variable listed in the left hand side.
+plt.plot(abang,indexb,label='No Deltoid Wrapping') #Plots no-deltoid wrapping moment arm
+plt.plot(abang,indexw,label='Deltoid Wrapping') #Plots deltoid wrapping moment arm
+plt.plot(abang,indexm,label='Muscle Behavior') #Plots MB unprocessed
+plt.plot(abang,posproc,label='Muscle Behavior, Post Processed') #Plots fitted MB
+plt.rcParams['text.color'] = 'white'
+plt.rcParams['axes.labelcolor'] = 'white'
+plt.rcParams['xtick.color'] = 'white'
+plt.rcParams['ytick.color'] = 'white'
+sns.set_palette("husl")
+plt.ylim(0,80) #x limits
+plt.xlim(0,140) #y limits
+plt.xlabel('Abduction Angle (degree)', fontsize=12)
+plt.ylabel('Moment Arm (mm)', fontsize=12)
+plt.gca().spines["top"].set_visible(False)
+plt.gca().spines["right"].set_visible(False)
+plt.tick_params(top=False, right=False)
+plt.axvline(x=90, color='magenta', linestyle='--')
+ax = plt.gca()  # get the current axes
+ax.set_facecolor('black')
+ax.grid(color='gray', linestyle='--')
+ax.spines['bottom'].set_color('white')
+ax.spines['left'].set_color('white')
+plt.legend(facecolor='black', fontsize=12)
+#legend = ax.legend(facecolor='black',bbox_to_anchor=(1.04, 1), loc="upper left")
+maz=round(maz,2)
+nina=round(nina,2)
+avm=round(avm,2)
+plt.text(3, 10, ('Moment Arm at 0 Degrees:',maz), fontsize=12, color='red')
+plt.text(3, 6.5, ('Moment Arm at 90 Degrees:',nina), fontsize=12, color='magenta')
+plt.text(3, 3, ('Average Moment Arm:',avm), fontsize=12, color='yellow')

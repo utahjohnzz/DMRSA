@@ -112,40 +112,7 @@ You can delete this next section of code but I left it in as a template to know 
 """
 import matplotlib.pyplot as plt
 import numpy as np
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-import matplotlib.pyplot as plt
-import numpy as np
-
-
-
-
-
-
-
-
+ #see resection cut file for more explanations on this 
 [abang,indexb,indexw,indexm,posproc,maz,nina]=DMRSAmA(145,140,32/2,21.9,0,21.4/2,0,29, 33,46.8/2-5,3.9)
 plt.plot(abang,posproc,label=('Onlay Configuration with +0 Lateralization'))
 print('MA @ 90 is:',nina,'MA @ 0 is:',maz)
