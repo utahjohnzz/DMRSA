@@ -170,9 +170,15 @@ avm=round(avm,2)
 maxa=round(maxa,2)
 maxl=round(maxl,2)
 swl=round(swl,2)
-plt.text(142, 50, ('Moment Arm at 0 Degrees:',maz), fontsize=12, color='white')
-plt.text(142, 44, ('Moment Arm at 90 Degrees:',nina), fontsize=12, color='magenta')
-plt.text(142, 38, ('Average Moment Arm:',avm), fontsize=12, color='white')
-plt.text(142, 32, ('Maximum Moment Arm:',maxa), fontsize=12, color='white')
-plt.text(142, 26, ('Maximum Moment Arm Location:',maxl), fontsize=12, color='white')
-plt.text(142, 20, ('Location of Moment Arm Switch',swl), fontsize=12, color='white')
+text = f'Moment Arm at 0 Degrees: {maz}'
+plt.text(142, 50, text, fontsize=12, color='white')
+text1 = f'Moment Arm at 90 Degrees: {nina}'
+text2 = f'Average Moment Arm: {avm}'
+text3 = f'Maximum Moment Arm: {maxa}'
+text4 = f'Maximum Moment Arm Location: {maxl}'
+text5 = f'Location of Moment Arm Switch: {swl}'
+plt.text(142, 44, text1, fontsize=12, color='magenta')
+plt.text(142, 38, text2, fontsize=12, color='white')
+plt.text(142, 32, text3, fontsize=12, color='white')
+plt.text(142, 26, text4, fontsize=12, color='white')
+plt.text(142, 20, text5, fontsize=12, color='white')
