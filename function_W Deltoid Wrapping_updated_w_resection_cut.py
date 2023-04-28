@@ -94,6 +94,7 @@ def DMRSAmA(b,abrange,r1m,r2m,r3m,r4m,r5m,r6m, r7m,r8m,r9m,tb,rc):
         posproc=np.append(posproc,indexm2) #post processing
         
         #this method has the same magnitude error, but typically may vary indice wise towards the end of the abduction range.
+    maxa=max(posproc)
     abang=np.linspace(0,abrange,step) #this is required to reset the abduction range for plotting purposes
     
     countf=0 #starts a 0 counter
@@ -105,7 +106,24 @@ def DMRSAmA(b,abrange,r1m,r2m,r3m,r4m,r5m,r6m, r7m,r8m,r9m,tb,rc):
         countf+=1
     maz=posproc[0] #moment arm at 0
     avm=np.average(posproc)
-    return abang,indexb,indexw,indexm,posproc,nina,maz,avm #this is the returned values
+    countz=0
+    for i in posproc:
+        if abs(i-maxa)<.01:
+            indexmom=countz
+            maxl=abang[countz]
+            break
+        countz+=1
+    countz=0
+    for i in indexm:
+        if countz==89:
+            swl=0
+            break
+        if abs(i-indexm[countz+1])>1:
+            swl=abang[countz]
+            break
+        countz+=1
+        
+    return abang,indexb,indexw,indexm,posproc,nina,maz,avm,maxa,maxl,swl #this is the returned values
 
     
 
@@ -119,9 +137,9 @@ You can delete this next section of code but I left it in as a template to know 
 import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns  
-fig = plt.figure(figsize=(8, 6), facecolor='black')
+fig = plt.figure(figsize=(10, 6), facecolor='black')
 #DMRSAmA(b,abrange,r1m,r2m,r3m,r4m,r5m,r6m, r7m,r8m,r9m,tb,rc) This is how the function is called
-[abang,indexb,indexw,indexm,posproc,nina,maz,avm]=DMRSAmA(155,140,32/2,15,0,21.4/2,40,29, 33,46.8/2+20,3.9,80,30) #This calls the function with the specified parameters and outputs the values as each variable listed in the left hand side.
+[abang,indexb,indexw,indexm,posproc,nina,maz,avm,maxa,maxl,swl]=DMRSAmA(155,140,32/2,15,0,21.4/2,40,29, 33,46.8/2+20,3.9,80,30) #This calls the function with the specified parameters and outputs the values as each variable listed in the left hand side.
 plt.plot(abang,indexb,label='No Deltoid Wrapping') #Plots no-deltoid wrapping moment arm
 plt.plot(abang,indexw,label='Deltoid Wrapping') #Plots deltoid wrapping moment arm
 plt.plot(abang,indexm,label='Muscle Behavior') #Plots MB unprocessed
@@ -145,10 +163,16 @@ ax.grid(color='gray', linestyle='--')
 ax.spines['bottom'].set_color('white')
 ax.spines['left'].set_color('white')
 plt.legend(facecolor='black', fontsize=12)
-#legend = ax.legend(facecolor='black',bbox_to_anchor=(1.04, 1), loc="upper left")
+legend = ax.legend(facecolor='black',bbox_to_anchor=(1.04, 1), loc="upper left")
 maz=round(maz,2)
 nina=round(nina,2)
 avm=round(avm,2)
-plt.text(3, 10, ('Moment Arm at 0 Degrees:',maz), fontsize=12, color='red')
-plt.text(3, 6.5, ('Moment Arm at 90 Degrees:',nina), fontsize=12, color='magenta')
-plt.text(3, 3, ('Average Moment Arm:',avm), fontsize=12, color='yellow')
+maxa=round(maxa,2)
+maxl=round(maxl,2)
+swl=round(swl,2)
+plt.text(142, 50, ('Moment Arm at 0 Degrees:',maz), fontsize=12, color='white')
+plt.text(142, 44, ('Moment Arm at 90 Degrees:',nina), fontsize=12, color='magenta')
+plt.text(142, 38, ('Average Moment Arm:',avm), fontsize=12, color='white')
+plt.text(142, 32, ('Maximum Moment Arm:',maxa), fontsize=12, color='white')
+plt.text(142, 26, ('Maximum Moment Arm Location:',maxl), fontsize=12, color='white')
+plt.text(142, 20, ('Location of Moment Arm Switch',swl), fontsize=12, color='white')
