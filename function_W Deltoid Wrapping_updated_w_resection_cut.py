@@ -57,6 +57,7 @@ def DMRSAmA(b,abrange,r1m,r2m,r3m,r4m,r5m,r6m, r7m,r8m,r9m,tb,rc):
         r4=nRa(z)*alpha(b)*[r4m,0,0] #IM axis to the deltoid insertion
         r4=r4[:,0] #extracts just the N coordinates from the 3x3 matrix
         di=tb-rc/np.sin(np.deg2rad(45)) #takes the length from the top of the humerus to the insertion and subtracts the resection depth
+        
         r5=nRa(z)*alpha(b)*[0,-di,0] #Resection plane to location of insertion 
         r5=r5[:,1] #extracts just the N coordinates from the 3x3 matrix
         n1=r1[0]+r2[0]+r3[0]+r4[0]+r5[0] #moment arm in N coordinates
@@ -105,18 +106,18 @@ def DMRSAmA(b,abrange,r1m,r2m,r3m,r4m,r5m,r6m, r7m,r8m,r9m,tb,rc):
             break #stops the loop once it is found
         countf+=1
     maz=posproc[0] #moment arm at 0
-    avm=np.average(posproc)
+    avm=np.average(posproc) #average moment arm
     countz=0
-    for i in posproc:
+    for i in posproc: #this will find the maximum moment arm via t/f thresholding
         if abs(i-maxa)<.01:
             indexmom=countz
             maxl=abang[countz]
             break
         countz+=1
     countz=0
-    for i in indexm:
+    for i in indexm: #this will find the moment at which the moment arm switches from one philospophy ot another via looking at the magnitude of change between adjacent poi
         if countz==89:
-            swl=0
+            swl=0 #it will show 0 if no switch occurs
             break
         if abs(i-indexm[countz+1])>1:
             swl=abang[countz]
@@ -136,10 +137,10 @@ You can delete this next section of code but I left it in as a template to know 
 
 import matplotlib.pyplot as plt
 import numpy as np
-import seaborn as sns  
+
 fig = plt.figure(figsize=(10, 6), facecolor='black')
 #DMRSAmA(b,abrange,r1m,r2m,r3m,r4m,r5m,r6m, r7m,r8m,r9m,tb,rc) This is how the function is called
-[abang,indexb,indexw,indexm,posproc,nina,maz,avm,maxa,maxl,swl]=DMRSAmA(155,140,32/2,15,0,21.4/2,40,29, 33,46.8/2+20,3.9,80,30) #This calls the function with the specified parameters and outputs the values as each variable listed in the left hand side.
+[abang,indexb,indexw,indexm,posproc,nina,maz,avm,maxa,maxl,swl]=DMRSAmA(135,140,32/2,15,0,21.4/2,40,29, 33,46.8/2+20,3.9,100,30) #This calls the function with the specified parameters and outputs the values as each variable listed in the left hand side.
 plt.plot(abang,indexb,label='No Deltoid Wrapping') #Plots no-deltoid wrapping moment arm
 plt.plot(abang,indexw,label='Deltoid Wrapping') #Plots deltoid wrapping moment arm
 plt.plot(abang,indexm,label='Muscle Behavior') #Plots MB unprocessed
@@ -148,7 +149,7 @@ plt.rcParams['text.color'] = 'white'
 plt.rcParams['axes.labelcolor'] = 'white'
 plt.rcParams['xtick.color'] = 'white'
 plt.rcParams['ytick.color'] = 'white'
-sns.set_palette("husl")
+
 plt.ylim(0,80) #x limits
 plt.xlim(0,140) #y limits
 plt.xlabel('Abduction Angle (degree)', fontsize=12)
