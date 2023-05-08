@@ -7,7 +7,7 @@ Code:
 I believe every important line of code has notes next to it. Refer to external documentation for more extensive description of the code.
 """
 
-def DMRSAmA(b,abrange,r1m,r2m,r3m,r4m,r5m,r6m, r7m,r8m,r9m,tb,rc):
+def DMRSAmA(b,abrange,r1m,r2m,r3m,r4m,r5m,r6m, r7m,r8m,r9m,tb,rc,rca):
         
     ###############Initial Setup
     import numpy as np #library for math functions
@@ -56,7 +56,7 @@ def DMRSAmA(b,abrange,r1m,r2m,r3m,r4m,r5m,r6m, r7m,r8m,r9m,tb,rc):
         r3=r3[:,0] #extracts just the N coordinates from the 3x3 matrix
         r4=nRa(z)*alpha(b)*[r4m,0,0] #IM axis to the deltoid insertion
         r4=r4[:,0] #extracts just the N coordinates from the 3x3 matrix
-        di=tb-rc/np.sin(np.deg2rad(45)) #takes the length from the top of the humerus to the insertion and subtracts the resection depth
+        di=tb-rc/np.sin(np.deg2rad(rca-90)) #takes the length from the top of the humerus to the insertion and subtracts the resection depth
         
         r5=nRa(z)*alpha(b)*[0,-di,0] #Resection plane to location of insertion 
         r5=r5[:,1] #extracts just the N coordinates from the 3x3 matrix
@@ -126,10 +126,25 @@ def DMRSAmA(b,abrange,r1m,r2m,r3m,r4m,r5m,r6m, r7m,r8m,r9m,tb,rc):
         
     return abang,indexb,indexw,indexm,posproc,nina,maz,avm,maxa,maxl,swl #this is the returned values
 
+
+
+"""
+return abang,indexb,indexw,indexm,posproc,nina,maz,avm,maxa,maxl,swl #this is the returned values
+This is the return command is returns these values that were calculated in the function. In order these represent:
+1. abang - Abduction Range (Degrees of Abduction)
+2. indexb - Vector of Moment Arms for Non-Deltoid Wrapping Algorithm
+3. indexw - Vector of Moment Arms for Deltoid Wrapping Algorithm
+4. indexm - Vector of Moment Arms for Muscle Behavior (Integrated) Algorithm
+5. posproc - Vector of Moment Arms for Fitted Muscle Behavior (Integrated) Algorithm
+6. nina - Moment Arm @ 90 Degrees
+7. maz - Moment Arm @ 0 Degrees
+8. avm - Average Moment Arm
+9. maxa - Maximum Moment Arm
+10. maxl - Maximum Moment Arm Angle Location
+11. swl - Angle Location at which Moment Arm Switches from Non-Deltoid Wrapping to Deltoid Wrapping Model via Muscle Behavior
+"""
+
     
-
-
-
 
 """
 You can delete this next section of code but I left it in as a template to know how to plot and activate the function. None of this is part of the calculation/the function itself.
@@ -140,7 +155,7 @@ import numpy as np
 
 fig = plt.figure(figsize=(10, 6), facecolor='black')
 #DMRSAmA(b,abrange,r1m,r2m,r3m,r4m,r5m,r6m, r7m,r8m,r9m,tb,rc) This is how the function is called
-[abang,indexb,indexw,indexm,posproc,nina,maz,avm,maxa,maxl,swl]=DMRSAmA(135,140,32/2,15,0,21.4/2,40,29, 33,46.8/2+20,3.9,100,30) #This calls the function with the specified parameters and outputs the values as each variable listed in the left hand side.
+[abang,indexb,indexw,indexm,posproc,nina,maz,avm,maxa,maxl,swl]=DMRSAmA(135,140,32/2,15,0,21.4/2,40,29, 33,46.8/2+20,3.9,100,30,135) #This calls the function with the specified parameters and outputs the values as each variable listed in the left hand side.
 plt.plot(abang,indexb,label='No Deltoid Wrapping') #Plots no-deltoid wrapping moment arm
 plt.plot(abang,indexw,label='Deltoid Wrapping') #Plots deltoid wrapping moment arm
 plt.plot(abang,indexm,label='Muscle Behavior') #Plots MB unprocessed
@@ -149,7 +164,6 @@ plt.rcParams['text.color'] = 'white'
 plt.rcParams['axes.labelcolor'] = 'white'
 plt.rcParams['xtick.color'] = 'white'
 plt.rcParams['ytick.color'] = 'white'
-
 plt.ylim(0,80) #x limits
 plt.xlim(0,140) #y limits
 plt.xlabel('Abduction Angle (degree)', fontsize=12)
